@@ -16,4 +16,6 @@ Assembly\ Exports/
 *.PcbDoc.htm
 
 # Ignore Nordic Firmware related files
+
+# Build directory
 build*
