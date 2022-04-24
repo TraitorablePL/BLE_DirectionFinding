@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <zephyr.h>
 
+#include <bluetooth/hci.h>
 #include <bluetooth/bluetooth.h>
 #include <bluetooth/direction.h>
 
@@ -164,6 +165,12 @@ static void cte_recv_cb(struct bt_le_per_adv_sync *sync,
 		   bt_le_per_adv_sync_get_index(sync), report->sample_count,
 		   cte_type2str(report->cte_type), report->slot_durations,
 		   packet_status2str(report->packet_status), report->rssi);
+
+	struct bt_hci_le_iq_sample *samp = report->sample;
+	for (uint8_t i = 0; i < report->sample_count; i++)
+	{
+		printk("Sample %d (I: %d, Q: %d)\n", i, samp[i].i, samp[i].q);
+	}
 }
 
 static struct bt_le_per_adv_sync_cb sync_callbacks = {
@@ -255,14 +262,10 @@ static void enable_cte_rx(void)
 
 	const struct bt_df_per_adv_sync_cte_rx_param cte_rx_params = {
 		.max_cte_count = 5,
-#if defined(CONFIG_BT_DF_CTE_RX_AOA)
-		.cte_types = BT_DF_CTE_TYPE_ALL,
-		.slot_durations = 0x2,
+		.cte_types = BT_DF_CTE_TYPE_AOA,
+		.slot_durations = 0x1,
 		.num_ant_ids = ARRAY_SIZE(ant_patterns),
 		.ant_ids = ant_patterns,
-#else
-		.cte_types = BT_DF_CTE_TYPE_AOD_1US | BT_DF_CTE_TYPE_AOD_2US,
-#endif /* CONFIG_BT_DF_CTE_RX_AOA */
 	};
 
 	printk("Enable receiving of CTE...\n");
@@ -335,8 +338,6 @@ static void scan_disable(void)
 void main(void)
 {
 	int err;
-
-	printk("Starting Connectionless Locator Demo\n");
 
 	printk("Bluetooth initialization...");
 	err = bt_enable(NULL);

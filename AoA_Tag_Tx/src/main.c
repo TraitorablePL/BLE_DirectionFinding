@@ -16,8 +16,11 @@
 #include <sys/byteorder.h>
 #include <sys/util.h>
 
-/* Length of CTE in unit of 8[us] */
-#define CTE_LEN (0x14U)
+// Switching Pattern (2us sample - 2us switching - 2us sample - 2us switching)
+
+// Length of CTE in unit of 8[us]
+// #define CTE_LEN (0x14U) // 45 samples
+#define CTE_LEN (0x02U) // 9 samples
 
 static void adv_sent_cb(struct bt_le_ext_adv *adv,
 						struct bt_le_ext_adv_sent_info *info);
@@ -65,8 +68,6 @@ void main(void)
 	char addr_s[BT_ADDR_LE_STR_LEN];
 	struct bt_le_oob oob_local;
 	int err;
-
-	printk("Starting Connectionless Beacon Demo\n");
 
 	/* Initialize the Bluetooth Subsystem */
 	printk("Bluetooth initialization...");
