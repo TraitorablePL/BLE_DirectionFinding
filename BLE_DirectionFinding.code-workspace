@@ -9,11 +9,12 @@
 			"${workspaceFolder}\\AoA_Locator_Rx",
 			"${workspaceFolder}\\AoA_Tag_Tx"
 		],
-		"nrf-connect.topdir": "${nrf-connect.sdk:1.9.1}",
-		"nrf-connect.toolchain.path": "${nrf-connect.toolchain:1.9.1}",
+		"nrf-connect.topdir": "${nrf-connect.sdk:2.0.0}",
+		"nrf-connect.toolchain.path": "${nrf-connect.toolchain:2.0.0}",
 		"files.associations": {
 			"bluetooth.h": "c",
-			"direction.h": "c"
+			"direction.h": "c",
+			"streambuf": "c"
 		}
 	}
 }

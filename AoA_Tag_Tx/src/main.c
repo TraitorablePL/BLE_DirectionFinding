@@ -18,8 +18,8 @@
 // Switching Pattern (2us sample - 2us switching - 2us sample - 2us switching)
 
 // Length of CTE in unit of 8[us]
-// #define CTE_LEN (0x14U) // 45 samples
-#define CTE_LEN (0x02U)  // 9 samples
+#define CTE_LEN (0x04U)  // 18 samples in 1us switching
+//#define CTE_LEN (0x02U)  // 9 samples
 
 static void adv_sent_cb(struct bt_le_ext_adv *adv,
                         struct bt_le_ext_adv_sent_info *info);
