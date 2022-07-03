@@ -12,6 +12,7 @@
 #include <zephyr.h>
 
 #define DEBUG_LOG 0
+#define PATTERN_LIMIT 16
 
 #define DEVICE_NAME CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
@@ -35,16 +36,45 @@ static K_SEM_DEFINE(sem_per_adv, 0, 1);
 static K_SEM_DEFINE(sem_per_sync, 0, 1);
 static K_SEM_DEFINE(sem_per_sync_lost, 0, 1);
 
-/* Example sequence of antenna switch patterns for antenna matrix designed by
- * Nordic. For more information about antenna switch patterns see README.rst.
+/*
+ * Antenna patterns for ISP AoA Demo Kit
+ * ANT_1    -> 0x5
+ * ANT_2    -> 0x6
+ * ANT_3    -> 0x4
+ * ANT_4    -> 0x9
+ * ANT_5    -> 0xA
+ * ANT_6    -> 0x8
+ * ANT_7    -> 0xD
+ * ANT_8    -> 0xE
+ * ANT_9    -> 0xC
+ * ANT_10   -> 0x1
+ * ANT_11   -> 0x2
+ * ANT_12   -> 0x0
  */
-static const uint8_t ant_patterns[] = {0x2, 0x0, 0x5, 0x6, 0x1, 0x4,
-                                       0xC, 0x9, 0xE, 0xD, 0x8, 0xA};
 
-// static const uint8_t ant_patterns[] = {0xD, 0xD, 0xD};
+// static const uint8_t ant_pattern[] = {0x2, 0x0, 0x5, 0x6, 0x1, 0x4,
+//                                        0xC, 0x9, 0xE, 0xD, 0x8, 0xA};
+
+static const uint8_t ant_pattern[] = {0x2, 0x2, 0x0, 0x5, 0x6};
 
 static inline uint32_t adv_interval_to_ms(uint16_t interval) {
     return interval * 5 / 4;
+}
+
+static const char *ant_pattern2str() {
+    static char str[PATTERN_LIMIT];
+    int i;
+    for (i = 0; i < ARRAY_SIZE(ant_pattern) && i < PATTERN_LIMIT; i++) {
+        if (ant_pattern[i] < 0xA) {
+            str[i] = '0' + ant_pattern[i];
+        } else if (ant_pattern[i] < 0x10) {
+            str[i] = 'A' + ant_pattern[i];
+        } else {
+            str[i] = 'X';
+        }
+    }
+    str[i + 1] = '\0';
+    return str;
 }
 
 static const char *phy2str(uint8_t phy) {
@@ -118,8 +148,9 @@ static void sync_cb(struct bt_le_per_adv_sync *sync,
         "Interval 0x%04x (%u ms), PHY %s\n",
         bt_le_per_adv_sync_get_index(sync), le_addr, info->interval,
         adv_interval_to_ms(info->interval), phy2str(info->phy));
+#else
+    printk("Interval: %u ms\n", adv_interval_to_ms(info->interval));
 #endif
-
     k_sem_give(&sem_per_sync);
 }
 
@@ -169,9 +200,10 @@ static void cte_recv_cb(
         cte_type2str(report->cte_type), report->slot_durations,
         packet_status2str(report->packet_status), report->rssi);
 #else
-    printk("Samp: %d, slot: %u [us], status: %s, RSSI: %i\n",
-           report->sample_count, report->slot_durations,
-           packet_status2str(report->packet_status), report->rssi);
+    printk(
+        "Pattern: %s, samples: %d, slot: %u [us], status: %s, RSSI: %i,\nIQ:{",
+        ant_pattern2str(), report->sample_count, report->slot_durations,
+        packet_status2str(report->packet_status), report->rssi);
 #endif
 
     struct bt_hci_le_iq_sample *samp = report->sample;
@@ -179,7 +211,10 @@ static void cte_recv_cb(
 #if DEBUG_LOG
         printk("Sample %d (I: %d, Q: %d)\n", i, samp[i].i, samp[i].q);
 #else
-        printk("#%d,I:%d,Q:%d\n", i, samp[i].i, samp[i].q);
+        if (i == report->sample_count - 1)
+            printk("(%d,%d)}\n\n", samp[i].i, samp[i].q);
+        else
+            printk("(%d,%d),", samp[i].i, samp[i].q);
 #endif
     }
 }
@@ -281,8 +316,8 @@ static void enable_cte_rx(void) {
         .max_cte_count = 5,
         .cte_types = BT_DF_CTE_TYPE_AOA,
         .slot_durations = 0x1,
-        .num_ant_ids = ARRAY_SIZE(ant_patterns),
-        .ant_ids = ant_patterns,
+        .num_ant_ids = ARRAY_SIZE(ant_pattern),
+        .ant_ids = ant_pattern,
     };
 #if DEBUG_LOG
     printk("Enable receiving of CTE...\n");
@@ -362,14 +397,16 @@ static void scan_disable(void) {
 }
 
 void main(void) {
-    int err;
-
+    int err = bt_enable(NULL);
+#if DEBUG_LOG
     printk("Bluetooth initialization...");
-    err = bt_enable(NULL);
     if (err) {
         printk("failed (err %d)\n", err);
     }
     printk("success\n");
+#else
+    printk("Init device tracking.\n");
+#endif
 
     scan_init();
 

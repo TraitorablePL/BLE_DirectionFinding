@@ -14,7 +14,13 @@
 		"files.associations": {
 			"bluetooth.h": "c",
 			"direction.h": "c",
-			"streambuf": "c"
-		}
+			"streambuf": "c",
+			"array": "c",
+			"string_view": "c",
+			"initializer_list": "c",
+			"ranges": "c",
+			"utility": "c"
+		},
+		"editor.bracketPairColorization.independentColorPoolPerBracketType": true
 	}
 }
