@@ -200,10 +200,9 @@ static void cte_recv_cb(
         cte_type2str(report->cte_type), report->slot_durations,
         packet_status2str(report->packet_status), report->rssi);
 #else
-    printk(
-        "Pattern: %s, samples: %d, slot: %u [us], status: %s, RSSI: %i,\nIQ:{",
-        ant_pattern2str(), report->sample_count, report->slot_durations,
-        packet_status2str(report->packet_status), report->rssi);
+    printk("Pattern:%s, samples: %d, slot: %u [us], status: %s, RSSI: %i, IQ:{",
+           ant_pattern2str(), report->sample_count, report->slot_durations,
+           packet_status2str(report->packet_status), report->rssi);
 #endif
 
     struct bt_hci_le_iq_sample *samp = report->sample;
@@ -212,7 +211,7 @@ static void cte_recv_cb(
         printk("Sample %d (I: %d, Q: %d)\n", i, samp[i].i, samp[i].q);
 #else
         if (i == report->sample_count - 1)
-            printk("(%d,%d)}\n\n", samp[i].i, samp[i].q);
+            printk("(%d,%d)}\n", samp[i].i, samp[i].q);
         else
             printk("(%d,%d),", samp[i].i, samp[i].q);
 #endif
@@ -405,7 +404,7 @@ void main(void) {
     }
     printk("success\n");
 #else
-    printk("Init device tracking.\n");
+    printk("Init device tracking\n");
 #endif
 
     scan_init();
