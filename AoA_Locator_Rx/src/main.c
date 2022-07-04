@@ -140,16 +140,17 @@ static bool data_cb(struct bt_data *data, void *user_data) {
 
 static void sync_cb(struct bt_le_per_adv_sync *sync,
                     struct bt_le_per_adv_sync_synced_info *info) {
-#if DEBUG_LOG
     char le_addr[BT_ADDR_LE_STR_LEN];
     bt_addr_le_to_str(info->addr, le_addr, sizeof(le_addr));
+#if DEBUG_LOG
     printk(
         "PER_ADV_SYNC[%u]: [DEVICE]: %s synced, "
         "Interval 0x%04x (%u ms), PHY %s\n",
         bt_le_per_adv_sync_get_index(sync), le_addr, info->interval,
         adv_interval_to_ms(info->interval), phy2str(info->phy));
 #else
-    printk("Interval: %u ms\n", adv_interval_to_ms(info->interval));
+    printk("$Addr:%s,interval:%ums,PHY:%s\n", le_addr,
+           adv_interval_to_ms(info->interval), phy2str(info->phy));
 #endif
     k_sem_give(&sem_per_sync);
 }
@@ -164,7 +165,7 @@ static void term_cb(struct bt_le_per_adv_sync *sync,
     printk("PER_ADV_SYNC[%u]: [DEVICE]: %s sync terminated\n",
            bt_le_per_adv_sync_get_index(sync), le_addr);
 #else
-    printk("Sync terminated\n");
+    printk("Sync lost\n");
 #endif
 
     k_sem_give(&sem_per_sync_lost);
@@ -200,9 +201,9 @@ static void cte_recv_cb(
         cte_type2str(report->cte_type), report->slot_durations,
         packet_status2str(report->packet_status), report->rssi);
 #else
-    printk("Pattern:%s, samples: %d, slot: %u [us], status: %s, RSSI: %i, IQ:{",
-           ant_pattern2str(), report->sample_count, report->slot_durations,
-           packet_status2str(report->packet_status), report->rssi);
+    printk("$Pattern:%s,channel:%d,samples:%d,slot:%uus,RSSI:%i,IQ:{",
+           ant_pattern2str(), report->chan_idx, report->sample_count,
+           report->slot_durations, report->rssi);
 #endif
 
     struct bt_hci_le_iq_sample *samp = report->sample;
@@ -446,7 +447,6 @@ void main(void) {
 #if DEBUG_LOG
         printk("success. Periodic sync established.\n");
 #endif
-
         enable_cte_rx();
 
         /* Disable scan to cleanup output */

@@ -1,4 +1,5 @@
 import datetime
+import time
 import sys
 import serial
 import json
@@ -73,11 +74,37 @@ class UART_Logger:
                 pass
         return result
 
+# class JSON_Parser:
+#     def __init__(self):
+#         pass
+
+# User input thread
+def user_input(user_event):
+    while True:
+        data = input()
+        if(data == "exit"):
+            user_event.set()
+            break
+        else:
+            print("Type 'exit' to end logging")
+
 # Program core
 if __name__ == "__main__":
 
+    user_event = threading.Event()
+    user_thread = threading.Thread(target=user_input, args=(user_event,))
+    user_thread.start()
+
+    log_buffer = []
     Logger = UART_Logger()
     Logger.connect()
-    print(Logger.time_stamp())
-    Logger.trigger(10)
+
+    if(Logger.trigger(10)):
+        print("Logging...")
+        while (not user_event.isSet()):
+        # Data should be parsed to JSON here
+            log_buffer.append(Logger.timestamp())
+            log_buffer.append(Logger.readline())
+        print("End of logging")
+
     Logger.disconnect()
