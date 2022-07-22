@@ -149,7 +149,7 @@ static void sync_cb(struct bt_le_per_adv_sync *sync,
         bt_le_per_adv_sync_get_index(sync), le_addr, info->interval,
         adv_interval_to_ms(info->interval), phy2str(info->phy));
 #else
-    printk("$Addr:%s,interval:%ums,PHY:%s\n", le_addr,
+    printk("$Addr:%s,Interval:%ums,PHY:%s\n", le_addr,
            adv_interval_to_ms(info->interval), phy2str(info->phy));
 #endif
     k_sem_give(&sem_per_sync);
@@ -201,7 +201,7 @@ static void cte_recv_cb(
         cte_type2str(report->cte_type), report->slot_durations,
         packet_status2str(report->packet_status), report->rssi);
 #else
-    printk("$Pattern:%s,channel:%d,samples:%d,slot:%uus,RSSI:%i,IQ:{",
+    printk("$Pattern:%s,Channel:%d,Samples:%d,Slot:%uus,RSSI:%i,IQ:[",
            ant_pattern2str(), report->chan_idx, report->sample_count,
            report->slot_durations, report->rssi);
 #endif
@@ -212,9 +212,9 @@ static void cte_recv_cb(
         printk("Sample %d (I: %d, Q: %d)\n", i, samp[i].i, samp[i].q);
 #else
         if (i == report->sample_count - 1)
-            printk("(%d,%d)}\n", samp[i].i, samp[i].q);
+            printk("[%d,%d]]\n", samp[i].i, samp[i].q);
         else
-            printk("(%d,%d),", samp[i].i, samp[i].q);
+            printk("[%d,%d],", samp[i].i, samp[i].q);
 #endif
     }
 }
