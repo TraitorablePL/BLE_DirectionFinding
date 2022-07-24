@@ -12,6 +12,7 @@
 #include <errno.h>
 #include <stddef.h>
 #include <string.h>
+#include <sys/reboot.h>
 #include <zephyr.h>
 
 #define PATTERN_LIMIT 16
@@ -19,12 +20,14 @@
 #define DEVICE_NAME CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 #define PEER_NAME_LEN_MAX 30
-/* BT Core 5.3 specification allows controller to wait 6 periodic advertising
+/*
+ * BT Core 5.3 specification allows controller to wait 6 periodic advertising
  * events for synchronization establishment, hence timeout must be longer than
  * that.
  */
 #define SYNC_CREATE_TIMEOUT_INTERVAL_NUM 7
-/* Maximum length of advertising data represented in hexadecimal format */
+
+// Maximum length of advertising data represented in hexadecimal format
 #define ADV_DATA_HEX_STR_LEN_MAX (BT_GAP_ADV_MAX_EXT_ADV_DATA_LEN * 2 + 1)
 
 static struct bt_le_per_adv_sync *sync;
@@ -62,8 +65,53 @@ static const uint8_t ant_pattern[] = {0x2, 0x2, 0x0, 0x5, 0x6};
 static inline uint32_t adv_interval_to_ms(uint16_t interval) {
     return interval * 5 / 4;
 }
+///////////////////////////////////
+//// UART
+///////////////////////////////////
 
-// 2str functions
+#define UART_DEVICE_NODE DT_CHOSEN(zephyr_shell_uart)
+#define MSG_SIZE 32
+
+static const struct device *uart_dev = DEVICE_DT_GET(UART_DEVICE_NODE);
+
+// receive buffer used in UART ISR callback
+static char rx_buf[MSG_SIZE];
+static int rx_buf_pos;
+
+static void perform_command(char *cmd) {
+    if (strcmp(cmd, "reset") == 0) {
+        sys_reboot(SYS_REBOOT_WARM);
+    } else {
+    }
+}
+
+/*
+ * Read characters from UART until line end is detected. Afterwards push the
+ * data to the message queue.
+ */
+static void uart_rx_cb(const struct device *dev, void *user_data) {
+    uint8_t c;
+
+    if (!uart_irq_update(uart_dev)) {
+        return;
+    }
+
+    while (uart_irq_rx_ready(uart_dev)) {
+        uart_fifo_read(uart_dev, &c, 1);
+
+        if ((c == '\n' || c == '\r') && rx_buf_pos > 0) {
+            rx_buf[rx_buf_pos] = '\0';
+            perform_command(rx_buf);
+            rx_buf_pos = 0;
+        } else if (rx_buf_pos < (sizeof(rx_buf) - 1)) {
+            rx_buf[rx_buf_pos++] = c;
+        }
+    }
+}
+
+///////////////////////////////////
+//// Convert to string functions
+///////////////////////////////////
 
 static const char *ant_pattern2str() {
     static char str[PATTERN_LIMIT];
@@ -126,7 +174,9 @@ static const char *packet_status2str(uint8_t status) {
     }
 }
 
-// Callbacks
+///////////////////////////////////
+//// Callbacks
+///////////////////////////////////
 
 static bool data_cb(struct bt_data *data, void *user_data) {
     char *name = user_data;
@@ -295,7 +345,23 @@ static void scan_disable(void) {
 }
 
 void main(void) {
-    int err = bt_enable(NULL);
+    int err;
+    char tx_buf[MSG_SIZE];
+
+    if (!device_is_ready(uart_dev)) {
+        printk("UART device not found!");
+        return;
+    }
+
+    /* configure interrupt and callback to receive data */
+    uart_irq_callback_user_data_set(uart_dev, uart_rx_cb, NULL);
+    uart_irq_rx_enable(uart_dev);
+
+    err = bt_enable(NULL);
+    if (err) {
+        return;
+    }
+
     printk("Init device tracking\n");
     scan_init();
 
