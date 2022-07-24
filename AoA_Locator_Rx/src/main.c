@@ -80,7 +80,7 @@ static int rx_buf_pos;
 
 static void perform_command(char *cmd) {
     if (strcmp(cmd, "reset") == 0) {
-        sys_reboot(SYS_REBOOT_WARM);
+        sys_reboot(SYS_REBOOT_COLD);
     } else {
     }
 }
