@@ -27,6 +27,9 @@ class UART_Logger:
         if(self.serial and not self.serial.is_open):
             self.serial.close()
 
+    def mcu_reset(self):
+        self.write("reset\n")
+
     def _trigger(self, event):
         while not event.isSet():
             line = self.readline()
@@ -45,6 +48,10 @@ class UART_Logger:
             isSuccess = False
         worker.join()
         return isSuccess
+
+    def write(self, str):
+        self.serial.write(str.encode('utf-8'))
+        self.serial.flush()
 
     # Read line from stream without '\r\n'
     def readline(self):
@@ -106,13 +113,15 @@ if __name__ == "__main__":
         "Header" : None,
         "Records" : []
     }
+
     Logger = UART_Logger()
     Logger.connect()
     state = "init"
 
-    print("Waiting for header...")
-    if(Logger.trigger(10)):
+    Logger.mcu_reset()
+    print("Device reset. Waiting for header...")
 
+    if(Logger.trigger(10)):
         print("Header found. Starting logging...")
         print("Type 'exit' to end logging")
 
@@ -126,17 +135,18 @@ if __name__ == "__main__":
             "Slot" : None
         }
 
-        sample = {
-            "Timediff" : None,
-            "RSSI" : None,
-            "IQ" : None
-        }
-
         while (not user_event.isSet()):
+            sample = {
+                "Timediff" : None,
+                "RSSI" : None,
+                "IQ" : None
+            }
+
             line = Logger.readline()
 
             if(state == "init" and line[:5] == "$Addr"):
                 header["Timestart"] = Logger.timestamp()
+                print(header["Timestart"])
                 update_tokens(header, line)
                 state = "packet_info"
 

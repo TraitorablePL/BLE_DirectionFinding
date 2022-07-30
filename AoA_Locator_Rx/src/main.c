@@ -57,9 +57,6 @@ static K_SEM_DEFINE(sem_per_sync_lost, 0, 1);
  * ANT_12   -> 0x0
  */
 
-// static const uint8_t ant_pattern[] = {0x2, 0x0, 0x5, 0x6, 0x1, 0x4,
-//                                        0xC, 0x9, 0xE, 0xD, 0x8, 0xA};
-
 static const uint8_t ant_pattern[] = {0x2, 0x2, 0x0, 0x5, 0x6};
 
 static inline uint32_t adv_interval_to_ms(uint16_t interval) {
@@ -74,7 +71,6 @@ static inline uint32_t adv_interval_to_ms(uint16_t interval) {
 
 static const struct device *uart_dev = DEVICE_DT_GET(UART_DEVICE_NODE);
 
-// receive buffer used in UART ISR callback
 static char rx_buf[MSG_SIZE];
 static int rx_buf_pos;
 
@@ -85,10 +81,6 @@ static void perform_command(char *cmd) {
     }
 }
 
-/*
- * Read characters from UART until line end is detected. Afterwards push the
- * data to the message queue.
- */
 static void uart_rx_cb(const struct device *dev, void *user_data) {
     uint8_t c;
 
