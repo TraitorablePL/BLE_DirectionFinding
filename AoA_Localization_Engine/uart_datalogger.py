@@ -4,6 +4,7 @@ import sys
 import serial
 import json
 import threading
+import jsbeautifier
 
 class UART_Logger:
     def __init__(self, port='COM4', baudrate='115200'):
@@ -86,9 +87,10 @@ class UART_Logger:
         return result
 
     def write_to_file(self, log_data):
-        # with open(f'log_{self.start_time.strftime("%Y.%m.%d_%H:%M:%S")}.json', 'w', encoding='utf-8') as f:
         with open(f'log_{self.start_time.strftime("%Y.%m.%d_%H.%M.%S")}.json', 'w', encoding='utf-8') as f:
-            json.dump(log_data, f, ensure_ascii=False, indent=4)
+            opts = jsbeautifier.default_options()
+            opts.indent_size = 2
+            f.write(jsbeautifier.beautify(json.dumps(log_data), opts))
 
 # Update tokens in dictionary with received UART msg
 def update_tokens(msg_type, data):
@@ -156,10 +158,12 @@ if __name__ == "__main__":
                 if(state == "init"):
                     header["Timestart"] = Logger.timestamp()
                     update_tokens(header, data)
+                    print(data)
                     state = "packet_info"
 
                 elif(state == "packet_info"):
                     update_tokens(header, data)
+                    print(data)
                     log_data["Header"] = header
                     state = "iq_sampling"
 
