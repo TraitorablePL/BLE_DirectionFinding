@@ -85,26 +85,18 @@ class UART_Logger:
                 pass
         return result
 
+    def write_to_file(self, log_data):
+        # with open(f'log_{self.start_time.strftime("%Y.%m.%d_%H:%M:%S")}.json', 'w', encoding='utf-8') as f:
+        with open(f'log_{self.start_time.strftime("%Y.%m.%d_%H.%M.%S")}.json', 'w', encoding='utf-8') as f:
+            json.dump(log_data, f, ensure_ascii=False, indent=4)
+
 # Update tokens in dictionary with received UART msg
-def update_tokens(header, line):
-    tokens = []
-    if line[:5] == "$Addr":
-        tokens = [sub.split(':', 1) for sub in (line[1:].split(','))]
-
-    elif line[:8] == "$Pattern":
-        IQ_data = line[1:-1].split('[', 1)
-        tokens = [sub.split(':', 1) for sub in (IQ_data[0].split(','))]
-
-    else:
-        pass
-
-    for i in range(len(tokens)):
-        token = tokens[i][0]
-        if token in sample:
-            if token == "IQ":
-                sample[tokens[i][0]] = IQ_data[1]
-            else:
-                sample[tokens[i][0]] = tokens[i][1]
+def update_tokens(msg_type, data):
+    keys_list = list(data)
+    for i in range(len(keys_list)):
+        key = keys_list[i]
+        if key in msg_type:
+            msg_type[key] = data[key]
 
 # User input thread
 def user_input(user_event):
@@ -158,31 +150,29 @@ if __name__ == "__main__":
 
             line = Logger.readline()
 
-            if(state == "init" and line[:5] == "$Addr"):
-                header["Timestart"] = Logger.timestamp()
-                print(header["Timestart"])
-                update_tokens(header, line)
-                state = "packet_info"
+            if(line[0] == "$"):
+                data = dict(json.loads(line[1:]))
 
-            elif(state == "packet_info" and line[:8] == "$Pattern"):
-                update_tokens(header, line)
-                log_data["Header"] = header
-                state = "iq_sampling"
+                if(state == "init"):
+                    header["Timestart"] = Logger.timestamp()
+                    update_tokens(header, data)
+                    state = "packet_info"
 
-            elif(state == "iq_sampling" and line[:8] == "$Pattern"):
-                sample["Timediff"] = Logger.timestamp_diff()
-                update_tokens(sample, line)
-                log_data["Records"].append(sample)
-                state = "iq_sampling"
+                elif(state == "packet_info"):
+                    update_tokens(header, data)
+                    log_data["Header"] = header
+                    state = "iq_sampling"
 
-            else:
-                pass
+                elif(state == "iq_sampling"):
+                    sample["Timediff"] = Logger.timestamp_diff()
+                    update_tokens(sample, data)
+                    log_data["Records"].append(sample)
+                    state = "iq_sampling"
 
-        print("End of logging")
-        
+        print(f"Logs saved to log_{Logger.start_time.strftime('%Y.%m.%d_%H.%M.%S')}.json")
+        Logger.write_to_file(log_data)
+
     else:
         print("Failed to find header msg")
-
-    print(f"Recorded data: {log_data}")
 
     Logger.disconnect()

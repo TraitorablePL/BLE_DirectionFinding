@@ -190,7 +190,7 @@ static void sync_cb(struct bt_le_per_adv_sync *sync,
                     struct bt_le_per_adv_sync_synced_info *info) {
     char le_addr[BT_ADDR_LE_STR_LEN];
     bt_addr_le_to_str(info->addr, le_addr, sizeof(le_addr));
-    printk("$Addr:%s,Interval:%ums,PHY:%s\n", le_addr,
+    printk("${\"Addr\":\"%s\",\"Interval\":\"%ums\",\"PHY\":\"%s\"}\n", le_addr,
            adv_interval_to_ms(info->interval), phy2str(info->phy));
     k_sem_give(&sem_per_sync);
 }
@@ -223,14 +223,16 @@ static void recv_cb(struct bt_le_per_adv_sync *sync,
 static void cte_recv_cb(
     struct bt_le_per_adv_sync *sync,
     struct bt_df_per_adv_sync_iq_samples_report const *report) {
-    printk("$Pattern:%s,Channel:%d,Samples:%d,Slot:%uus,RSSI:%i,IQ:[",
-           ant_pattern2str(), report->chan_idx, report->sample_count,
-           report->slot_durations, report->rssi);
+    printk(
+        "${\"Pattern\":%s,\"Channel\":%d,\"Samples\":%d,\"Slot\":\"%uus\","
+        "\"RSSI\":%i,\"IQ\":[",
+        ant_pattern2str(), report->chan_idx, report->sample_count,
+        report->slot_durations, report->rssi);
 
     struct bt_hci_le_iq_sample *samp = report->sample;
     for (uint8_t i = 0; i < report->sample_count; i++) {
         if (i == report->sample_count - 1)
-            printk("[%d,%d]]\n", samp[i].i, samp[i].q);
+            printk("[%d,%d]]}\n", samp[i].i, samp[i].q);
         else
             printk("[%d,%d],", samp[i].i, samp[i].q);
     }
