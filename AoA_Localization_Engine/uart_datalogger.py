@@ -87,10 +87,24 @@ class UART_Logger:
 
 # Update tokens in dictionary with received UART msg
 def update_tokens(header, line):
-    tokens = [sub.split(':', 1) for sub in (line[1:].split(','))]
-    for i in range(len(tokens)): # zle dziala
-        if tokens[i][0] in header:
-            header[tokens[i][0]] = tokens[i][1]
+    tokens = []
+    if line[:5] == "$Addr":
+        tokens = [sub.split(':', 1) for sub in (line[1:].split(','))]
+
+    elif line[:8] == "$Pattern":
+        IQ_data = line[1:-1].split('[', 1)
+        tokens = [sub.split(':', 1) for sub in (IQ_data[0].split(','))]
+
+    else:
+        pass
+
+    for i in range(len(tokens)):
+        token = tokens[i][0]
+        if token in sample:
+            if token == "IQ":
+                sample[tokens[i][0]] = IQ_data[1]
+            else:
+                sample[tokens[i][0]] = tokens[i][1]
 
 # User input thread
 def user_input(user_event):
@@ -156,7 +170,6 @@ if __name__ == "__main__":
                 state = "iq_sampling"
 
             elif(state == "iq_sampling" and line[:8] == "$Pattern"):
-                #TODO: Fix IQ formating inside update_tokens function
                 sample["Timediff"] = Logger.timestamp_diff()
                 update_tokens(sample, line)
                 log_data["Records"].append(sample)
