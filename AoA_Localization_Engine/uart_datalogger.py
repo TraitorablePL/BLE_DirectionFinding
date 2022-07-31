@@ -5,6 +5,7 @@ import serial
 import json
 import threading
 import jsbeautifier
+import pathlib
 
 class UART_Logger:
     def __init__(self, port='COM4', baudrate='115200'):
@@ -87,7 +88,8 @@ class UART_Logger:
         return result
 
     def write_to_file(self, log_data):
-        with open(f'log_{self.start_time.strftime("%Y.%m.%d_%H.%M.%S")}.json', 'w', encoding='utf-8') as f:
+        pathlib.Path("logs").mkdir(exist_ok=True)
+        with open(f'logs/log_{self.start_time.strftime("%Y.%m.%d_%H.%M.%S")}.json', 'w', encoding='utf-8') as f:
             opts = jsbeautifier.default_options()
             opts.indent_size = 2
             f.write(jsbeautifier.beautify(json.dumps(log_data), opts))
