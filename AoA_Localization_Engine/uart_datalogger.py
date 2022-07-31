@@ -87,6 +87,7 @@ class UART_Logger:
                 pass
         return result
 
+    # Save captured log into JSON formatted file
     def write_to_file(self, log_data):
         pathlib.Path("logs").mkdir(exist_ok=True)
         with open(f'logs/log_{self.start_time.strftime("%Y.%m.%d_%H.%M.%S")}.json', 'w', encoding='utf-8') as f:
@@ -94,13 +95,13 @@ class UART_Logger:
             opts.indent_size = 2
             f.write(jsbeautifier.beautify(json.dumps(log_data), opts))
 
-# Update tokens in dictionary with received UART msg
-def update_tokens(msg_type, data):
-    keys_list = list(data)
-    for i in range(len(keys_list)):
-        key = keys_list[i]
-        if key in msg_type:
-            msg_type[key] = data[key]
+    # Update tokens in dictionary with received UART msg
+    def update_tokens(msg_type, data):
+        keys_list = list(data)
+        for i in range(len(keys_list)):
+            key = keys_list[i]
+            if key in msg_type:
+                msg_type[key] = data[key]
 
 # User input thread
 def user_input(user_event):
@@ -114,7 +115,6 @@ def user_input(user_event):
 
 # Program core
 if __name__ == "__main__":
-
     user_event = threading.Event()
     user_thread = threading.Thread(target=user_input, args=(user_event,))
     user_thread.start()
@@ -159,17 +159,17 @@ if __name__ == "__main__":
 
                 if(state == "init"):
                     header["Timestart"] = Logger.timestamp()
-                    update_tokens(header, data)
+                    Logger.update_tokens(header, data)
                     state = "packet_info"
 
                 elif(state == "packet_info"):
-                    update_tokens(header, data)
+                    Logger.update_tokens(header, data)
                     log_data["Header"] = header
                     state = "iq_sampling"
 
                 elif(state == "iq_sampling"):
                     sample["Timediff"] = Logger.timestamp_diff()
-                    update_tokens(sample, data)
+                    Logger.update_tokens(sample, data)
                     log_data["Records"].append(sample)
                     state = "iq_sampling"
 
