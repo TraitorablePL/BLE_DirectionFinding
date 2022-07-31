@@ -160,12 +160,10 @@ if __name__ == "__main__":
                 if(state == "init"):
                     header["Timestart"] = Logger.timestamp()
                     update_tokens(header, data)
-                    print(data)
                     state = "packet_info"
 
                 elif(state == "packet_info"):
                     update_tokens(header, data)
-                    print(data)
                     log_data["Header"] = header
                     state = "iq_sampling"
 
