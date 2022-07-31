@@ -96,7 +96,7 @@ class UART_Logger:
             f.write(jsbeautifier.beautify(json.dumps(log_data), opts))
 
     # Update tokens in dictionary with received UART msg
-    def update_tokens(msg_type, data):
+    def update_tokens(self, msg_type, data):
         keys_list = list(data)
         for i in range(len(keys_list)):
             key = keys_list[i]
