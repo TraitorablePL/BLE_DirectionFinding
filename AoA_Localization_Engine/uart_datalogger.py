@@ -157,17 +157,17 @@ if __name__ == "__main__":
             if(line[0] == "$"):
                 data = dict(json.loads(line[1:]))
 
-                if(state == "init"):
+                if(state == "init" and "Addr" in data):
                     header["Timestart"] = Logger.timestamp()
                     Logger.update_tokens(header, data)
                     state = "packet_info"
 
-                elif(state == "packet_info"):
+                elif(state == "packet_info" and "Pattern" in data):
                     Logger.update_tokens(header, data)
                     log_data["Header"] = header
                     state = "iq_sampling"
 
-                elif(state == "iq_sampling"):
+                elif(state == "iq_sampling" and "Pattern" in data):
                     sample["Timediff"] = Logger.timestamp_diff()
                     Logger.update_tokens(sample, data)
                     log_data["Records"].append(sample)
