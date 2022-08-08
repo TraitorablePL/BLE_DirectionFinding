@@ -57,7 +57,7 @@ static K_SEM_DEFINE(sem_per_sync_lost, 0, 1);
  * ANT_12   -> 0x0
  */
 
-static const uint8_t ant_pattern[] = {0x2, 0x2, 0x0, 0x5, 0x6};
+static const uint8_t ant_pattern[] = {0x2, 0x2, 0x0, 0x5, 0x6, 0x6, 0xE, 0xD, 0x8, 0xA, 0xA};
 
 static inline uint32_t adv_interval_to_ms(uint16_t interval) {
     return interval * 5 / 4;
