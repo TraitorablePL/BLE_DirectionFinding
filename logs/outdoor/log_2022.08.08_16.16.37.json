@@ -32,14 +32,6 @@
       [-9, 2]
     ]
   }, {
-    "Timediff": "+0:00:02.400887",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:03.592931",
-    "RSSI": null,
-    "IQ": null
-  }, {
     "Timediff": "+0:00:03.909792",
     "RSSI": -640,
     "IQ": [
@@ -62,10 +54,6 @@
       [-13, 4],
       [12, 1]
     ]
-  }, {
-    "Timediff": "+0:00:04.798458",
-    "RSSI": null,
-    "IQ": null
   }, {
     "Timediff": "+0:00:05.117839",
     "RSSI": -640,
@@ -90,34 +78,6 @@
       [9, -8]
     ]
   }, {
-    "Timediff": "+0:00:05.992640",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:06.890730",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:08.096081",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:08.694081",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:09.901049",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:10.792354",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:11.685999",
-    "RSSI": null,
-    "IQ": null
-  }, {
     "Timediff": "+0:00:12.008823",
     "RSSI": -630,
     "IQ": [
@@ -140,10 +100,6 @@
       [12, 4],
       [-9, -8]
     ]
-  }, {
-    "Timediff": "+0:00:12.898827",
-    "RSSI": null,
-    "IQ": null
   }, {
     "Timediff": "+0:00:13.203932",
     "RSSI": -630,
@@ -168,14 +124,6 @@
       [-13, 3]
     ]
   }, {
-    "Timediff": "+0:00:14.101067",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:14.995992",
-    "RSSI": null,
-    "IQ": null
-  }, {
     "Timediff": "+0:00:15.313914",
     "RSSI": -630,
     "IQ": [
@@ -199,10 +147,6 @@
       [-4, 8]
     ]
   }, {
-    "Timediff": "+0:00:16.192309",
-    "RSSI": null,
-    "IQ": null
-  }, {
     "Timediff": "+0:00:16.500400",
     "RSSI": -620,
     "IQ": [
@@ -225,10 +169,6 @@
       [-1, -12],
       [-4, 9]
     ]
-  }, {
-    "Timediff": "+0:00:17.385135",
-    "RSSI": null,
-    "IQ": null
   }, {
     "Timediff": "+0:00:17.711219",
     "RSSI": -640,
@@ -276,10 +216,6 @@
       [-11, 5]
     ]
   }, {
-    "Timediff": "+0:00:18.888983",
-    "RSSI": null,
-    "IQ": null
-  }, {
     "Timediff": "+0:00:19.216265",
     "RSSI": -640,
     "IQ": [
@@ -302,30 +238,6 @@
       [-14, -3],
       [8, 7]
     ]
-  }, {
-    "Timediff": "+0:00:19.789890",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:20.683940",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:21.297773",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:21.898658",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:22.791965",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:23.993196",
-    "RSSI": null,
-    "IQ": null
   }, {
     "Timediff": "+0:00:24.313916",
     "RSSI": -620,
@@ -373,22 +285,6 @@
       [-9, -10]
     ]
   }, {
-    "Timediff": "+0:00:25.198137",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:26.396563",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:27.292290",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:28.486973",
-    "RSSI": null,
-    "IQ": null
-  }, {
     "Timediff": "+0:00:28.803850",
     "RSSI": -630,
     "IQ": [
@@ -411,38 +307,6 @@
       [11, 13],
       [-2, -12]
     ]
-  }, {
-    "Timediff": "+0:00:29.698105",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:30.593814",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:31.792000",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:32.698350",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:33.592569",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:34.493757",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:35.098577",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:35.995635",
-    "RSSI": null,
-    "IQ": null
   }, {
     "Timediff": "+0:00:36.306680",
     "RSSI": -620,
@@ -467,18 +331,6 @@
       [-10, -5]
     ]
   }, {
-    "Timediff": "+0:00:37.199706",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:38.087706",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:38.993289",
-    "RSSI": null,
-    "IQ": null
-  }, {
     "Timediff": "+0:00:39.313263",
     "RSSI": -640,
     "IQ": [
@@ -501,10 +353,6 @@
       [11, 7],
       [-4, -11]
     ]
-  }, {
-    "Timediff": "+0:00:40.188421",
-    "RSSI": null,
-    "IQ": null
   }, {
     "Timediff": "+0:00:40.510910",
     "RSSI": -640,
@@ -529,10 +377,6 @@
       [-12, 0]
     ]
   }, {
-    "Timediff": "+0:00:41.700544",
-    "RSSI": null,
-    "IQ": null
-  }, {
     "Timediff": "+0:00:42.015367",
     "RSSI": -620,
     "IQ": [
@@ -555,10 +399,6 @@
       [-5, 9],
       [12, -3]
     ]
-  }, {
-    "Timediff": "+0:00:42.592045",
-    "RSSI": null,
-    "IQ": null
   }, {
     "Timediff": "+0:00:42.914238",
     "RSSI": -620,
@@ -583,22 +423,6 @@
       [-5, -7]
     ]
   }, {
-    "Timediff": "+0:00:43.801443",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:44.998785",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:45.896640",
-    "RSSI": null,
-    "IQ": null
-  }, {
-    "Timediff": "+0:00:46.801010",
-    "RSSI": null,
-    "IQ": null
-  }, {
     "Timediff": "+0:00:47.119024",
     "RSSI": -630,
     "IQ": [
@@ -622,10 +446,6 @@
       [-7, 10]
     ]
   }, {
-    "Timediff": "+0:00:47.690304",
-    "RSSI": null,
-    "IQ": null
-  }, {
     "Timediff": "+0:00:48.006746",
     "RSSI": -630,
     "IQ": [
@@ -648,9 +468,5 @@
       [9, 9],
       [-5, -12]
     ]
-  }, {
-    "Timediff": "+0:00:48.896630",
-    "RSSI": null,
-    "IQ": null
   }]
 }
