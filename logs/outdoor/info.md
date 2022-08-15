@@ -23,9 +23,15 @@
 - log_2022.08.08_16.56.59.json - distance 4m, 78 samples
 - log_2022.08.08_17.15.28.json - distance 4m, 82 samples (max)
 
-## pattern 220566ED8AA, tx 40cm over ground level, rx 1m over ground level
+## full pattern, tx 40cm over ground level, rx 1m over ground level
 
-- log_2022.08.08_17.22.18.json - distance 4m, 0 deg, in front of antenna
-- log_2022.08.08_17.24.29.json - distance 4m, 45 deg, on the right of antenna
-- log_2022.08.08_17.26.08.json - distance 4m, -30 deg, on the left of antenna (invalid data)
-- log_2022.08.08_17.28.25.json - distance 4m, 90 deg, on the right of antenna
+- log_2022.08.15_15.27.44.json - distance 4m, 0 deg, in front of antenna
+- log_2022.08.15_15.30.38.json - distance 4m, 45 deg, on the right of antenna
+- log_2022.08.15_15.33.47.json - distance 4m, 15-30 deg, on the right of antenna
+- log_2022.08.15_15.36.06.json - distance 4m, 70 deg, on the right of antenna
+- log_2022.08.15_15.38.52.json - distance 4m, 90 deg, on the right of antenna
+- log_2022.08.15_15.41.38.json - distance 4m, -45 deg, on the left of antenna
+- log_2022.08.15_15.44.12.json - distance 4m, -60 deg, on the left of antenna
+- log_2022.08.15_15.47.03.json - distance 8m, -45 deg, on the left of antenna
+- log_2022.08.15_15.49.26.json - distance 8m, 0 deg, in front of antenna
+- log_2022.08.15_15.52.09.json - distance 8m, 15 deg, on the right of antenna
