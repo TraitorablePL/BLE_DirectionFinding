@@ -28,7 +28,7 @@
 - log_2022.08.15_15.27.44.json - distance 4m, 0 deg, in front of antenna
 - log_2022.08.15_15.30.38.json - distance 4m, 45 deg, on the right of antenna
 - log_2022.08.15_15.33.47.json - distance 4m, 15-30 deg, on the right of antenna
-- log_2022.08.15_15.36.06.json - distance 4m, 70 deg, on the right of antenna
+- log_2022.08.15_15.36.06.json - distance 4m, 70 deg, on the right of antenna (no samples)
 - log_2022.08.15_15.38.52.json - distance 4m, 90 deg, on the right of antenna
 - log_2022.08.15_15.41.38.json - distance 4m, -45 deg, on the left of antenna
 - log_2022.08.15_15.44.12.json - distance 4m, -60 deg, on the left of antenna
