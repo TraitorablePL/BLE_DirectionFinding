@@ -15,7 +15,7 @@
 #include <sys/reboot.h>
 #include <zephyr.h>
 
-#define PATTERN_LIMIT 16
+#define PATTERN_LIMIT 30
 
 #define DEVICE_NAME CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
@@ -127,7 +127,7 @@ static const char *ant_pattern2str() {
         if (ant_pattern[i] < 0xA) {
             str[i] = '0' + ant_pattern[i];
         } else if (ant_pattern[i] < 0x10) {
-            str[i] = 'A' + ant_pattern[i];
+            str[i] = 'A' + (ant_pattern[i] - 0xA);
         } else {
             str[i] = 'X';
         }
@@ -239,7 +239,7 @@ static void cte_recv_cb(
     struct bt_le_per_adv_sync *sync,
     struct bt_df_per_adv_sync_iq_samples_report const *report) {
     printk(
-        "${\"Pattern\":%s,\"Channel\":%d,\"Samples\":%d,\"Slot\":\"%uus\","
+        "${\"Pattern\":\"%s\",\"Channel\":%d,\"Samples\":%d,\"Slot\":\"%uus\","
         "\"RSSI\":%i,\"IQ\":[",
         ant_pattern2str(), report->chan_idx, report->sample_count,
         report->slot_durations, report->rssi);
