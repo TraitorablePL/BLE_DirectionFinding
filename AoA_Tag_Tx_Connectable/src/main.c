@@ -28,6 +28,18 @@ static const struct bt_data ad[] = {
                   BT_LE_SUPP_FEAT_24_ENCODE(DF_FEAT_ENABLED)),
 };
 
+// Extended advertising
+static struct bt_le_ext_adv *adv_set;
+
+const static struct bt_le_adv_param param = BT_LE_ADV_PARAM_INIT(
+    BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_USE_NAME, BT_GAP_ADV_FAST_INT_MIN_2,
+    BT_GAP_ADV_FAST_INT_MAX_2, NULL);
+static struct bt_le_ext_adv_start_param ext_adv_start_param = {
+    .timeout = 0,
+    .num_events = 0,
+};
+/////////////////////////
+
 /* Latency set to zero, to enforce PDU exchange every connection event */
 #define CONN_LATENCY 0U
 /* Interval used to run CTE request procedure periodically.
@@ -85,13 +97,28 @@ static void bt_ready(void) {
 
     printk("Bluetooth initialized\n");
 
-    err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), NULL, 0);
+    printk("Advertising set create...");
+    err = bt_le_ext_adv_create(&param, NULL, &adv_set);
     if (err) {
-        printk("Advertising failed to start (err %d)\n", err);
+        printk("failed (err %d)\n", err);
         return;
     }
+    printk("success\n");
 
-    printk("Advertising successfully started\n");
+    printk("Extended advertising enable...");
+    err = bt_le_ext_adv_start(adv_set, &ext_adv_start_param);
+    if (err) {
+        printk("failed (err %d)\n", err);
+        return;
+    }
+    printk("success\n");
+
+    // Standard advertising
+    // err = bt_le_adv_start(BT_LE_EXT_ADV_CONN_NAME, ad, ARRAY_SIZE(ad), NULL,
+    // 0); if (err) {
+    //     printk("Advertising failed to start (err %d)\n", err);
+    //     return;
+    // }
 }
 
 void main(void) {
