@@ -271,12 +271,11 @@ static void cte_recv_cb(struct bt_conn *conn,
     //     printk("CTE[%s]: request failed, err %u\n", addr, report->err);
     // }
     printk(
-        "${\"Pattern\":\"%s\",\"Ant "
-        "ID\":%d,\"Channel\":%d,\"PHY\":%s,\"Samples\":%d,\"Slot\":\"%uus\","
+        "${\"Pattern\":\"%s\",\"Channel\":%d,\"PHY\":%s,\"Samples\":%d,"
+        "\"Slot\":\"%uus\","
         "\"RSSI\":%i,\"IQ\":[",
-        ant_pattern2str(), report->rssi_ant_id, report->chan_idx,
-        phy2str(report->rx_phy), report->sample_count, report->slot_durations,
-        report->rssi);
+        ant_pattern2str(), report->chan_idx, phy2str(report->rx_phy),
+        report->sample_count, report->slot_durations, report->rssi);
 
     struct bt_hci_le_iq_sample *samp = report->sample;
     for (uint8_t i = 0; i < report->sample_count; i++) {

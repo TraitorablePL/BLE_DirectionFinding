@@ -29,7 +29,7 @@ static const struct bt_data ad[] = {
 };
 
 /* Latency set to zero, to enforce PDU exchange every connection event */
-#define CONN_LATENCY 90U
+#define CONN_LATENCY 0U
 /* Interval used to run CTE request procedure periodically.
  * Value is a number of connection events.
  */
@@ -80,17 +80,12 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
     .disconnected = disconnected,
 };
 
-#define BT_LE_ADV_1M                                                      \
-    BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE | BT_LE_ADV_OPT_NO_2M,      \
-                    BT_GAP_ADV_FAST_INT_MIN_2, BT_GAP_ADV_FAST_INT_MAX_2, \
-                    NULL)
-
 static void bt_ready(void) {
     int err;
 
     printk("Bluetooth initialized\n");
 
-    err = bt_le_adv_start(BT_LE_ADV_1M, ad, ARRAY_SIZE(ad), NULL, 0);
+    err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), NULL, 0);
     if (err) {
         printk("Advertising failed to start (err %d)\n", err);
         return;
@@ -98,14 +93,6 @@ static void bt_ready(void) {
 
     printk("Advertising successfully started\n");
 }
-
-/** Connectable extended advertising with @ref BT_LE_ADV_OPT_USE_NAME */
-// #define BT_LE_EXT_ADV_CONN_NAME BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | \
-// 						BT_LE_ADV_OPT_CONNECTABLE, \
-// 						BT_LE_ADV_OPT_USE_NAME, \
-// 						BT_GAP_ADV_FAST_INT_MIN_2, \
-// 						BT_GAP_ADV_FAST_INT_MAX_2, \
-// 						NULL)
 
 void main(void) {
     int err;
