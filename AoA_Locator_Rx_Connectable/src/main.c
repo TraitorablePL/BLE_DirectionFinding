@@ -37,10 +37,26 @@ static const struct bt_le_conn_param conn_params =
     BT_LE_CONN_PARAM_INIT(BT_GAP_INIT_CONN_INT_MIN, BT_GAP_INIT_CONN_INT_MAX,
                           CONN_LATENCY, CONN_TIMEOUT);
 
-#if defined(CONFIG_BT_DF_CTE_RX_AOA)
-static const uint8_t ant_patterns[] = {0x2, 0x0, 0x5, 0x6, 0x1, 0x4,
-                                       0xC, 0x9, 0xE, 0xD, 0x8, 0xA};
-#endif /* CONFIG_BT_DF_CTE_RX_AOA */
+/*
+ * Antenna patterns for ISP AoA Demo Kit
+ * ANT_1    -> 0x5
+ * ANT_2    -> 0x6
+ * ANT_3    -> 0x4
+ * ANT_4    -> 0x9
+ * ANT_5    -> 0xA
+ * ANT_6    -> 0x8
+ * ANT_7    -> 0xD
+ * ANT_8    -> 0xE
+ * ANT_9    -> 0xC
+ * ANT_10   -> 0x1
+ * ANT_11   -> 0x2
+ * ANT_12   -> 0x0
+ */
+
+static const uint8_t ant_patterns[] = {0x6, 0x6};
+
+// static const uint8_t ant_patterns[] = {0x2, 0x0, 0x5, 0x6, 0x1, 0x4,
+//                                        0xC, 0x9, 0xE, 0xD, 0x8, 0xA};
 
 static void start_scan(void);
 
