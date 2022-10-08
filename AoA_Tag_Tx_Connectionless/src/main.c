@@ -21,7 +21,7 @@
 #define CTE_LEN (0x14U)  // 82 samples in 1us switching
 // #define CTE_LEN (0x0F)  // 62 samples in 1us switching
 // #define CTE_LEN (0x04U)  // 18 samples in 1us switching
-//#define CTE_LEN (0x02U)  // 9 samples
+// #define CTE_LEN (0x02U)  // 9 samples
 
 static void adv_sent_cb(struct bt_le_ext_adv *adv,
                         struct bt_le_ext_adv_sent_info *info);
@@ -65,7 +65,7 @@ void main(void) {
     struct bt_le_oob oob_local;
     int err;
 
-    /* Initialize the Bluetooth Subsystem */
+    // Initialize the Bluetooth Subsystem
     printk("Bluetooth initialization...");
     err = bt_enable(NULL);
     if (err) {

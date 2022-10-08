@@ -20,11 +20,10 @@
 #define DEVICE_NAME CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 #define PEER_NAME_LEN_MAX 30
-/*
- * BT Core 5.3 specification allows controller to wait 6 periodic advertising
- * events for synchronization establishment, hence timeout must be longer than
- * that.
- */
+
+// BT Core 5.3 specification allows controller to wait 6 periodic advertising
+// events for synchronization establishment, hence timeout must be longer than
+// that.
 #define SYNC_CREATE_TIMEOUT_INTERVAL_NUM 7
 
 // Maximum length of advertising data represented in hexadecimal format
@@ -41,21 +40,19 @@ static K_SEM_DEFINE(sem_per_adv, 0, 1);
 static K_SEM_DEFINE(sem_per_sync, 0, 1);
 static K_SEM_DEFINE(sem_per_sync_lost, 0, 1);
 
-/*
- * Antenna patterns for ISP AoA Demo Kit
- * ANT_1    -> 0x5
- * ANT_2    -> 0x6
- * ANT_3    -> 0x4
- * ANT_4    -> 0x9
- * ANT_5    -> 0xA
- * ANT_6    -> 0x8
- * ANT_7    -> 0xD
- * ANT_8    -> 0xE
- * ANT_9    -> 0xC
- * ANT_10   -> 0x1
- * ANT_11   -> 0x2
- * ANT_12   -> 0x0
- */
+// Antenna patterns for ISP AoA Demo Kit
+// ANT_1    -> 0x5
+// ANT_2    -> 0x6
+// ANT_3    -> 0x4
+// ANT_4    -> 0x9
+// ANT_5    -> 0xA
+// ANT_6    -> 0x8
+// ANT_7    -> 0xD
+// ANT_8    -> 0xE
+// ANT_9    -> 0xC
+// ANT_10   -> 0x1
+// ANT_11   -> 0x2
+// ANT_12   -> 0x0
 
 // Full pattern utilizing all antennas
 static const uint8_t ant_pattern[] = {0x2, 0x2, 0x0, 0x5, 0x6, 0x6,
@@ -63,16 +60,14 @@ static const uint8_t ant_pattern[] = {0x2, 0x2, 0x0, 0x5, 0x6, 0x6,
                                       0xE, 0xE, 0xC, 0x1, 0x2};
 
 // Horizontal antennas pattern
-/*
-static const uint8_t ant_pattern[] = {0x2, 0x2, 0x0, 0x5, 0x6, 0x6,
-                                      0xE, 0xD, 0x8, 0xA, 0xA};
-*/
+
+// static const uint8_t ant_pattern[] = {0x2, 0x2, 0x0, 0x5, 0x6, 0x6,
+//                                       0xE, 0xD, 0x8, 0xA, 0xA};
 
 // Vertical antennas pattern
-/*
-static const uint8_t ant_pattern[] = {0x2, 0x2, 0x1, 0xC, 0xE, 0xE,
-                                      0x6, 0x4, 0x9, 0xA, 0xA};
-*/
+
+// static const uint8_t ant_pattern[] = {0x2, 0x2, 0x1, 0xC, 0xE, 0xE,
+//                                       0x6, 0x4, 0x9, 0xA, 0xA};
 
 static inline uint32_t adv_interval_to_ms(uint16_t interval) {
     return interval * 5 / 4;
@@ -362,7 +357,7 @@ void main(void) {
         return;
     }
 
-    /* configure interrupt and callback to receive data */
+    // configure interrupt and callback to receive data
     uart_irq_callback_user_data_set(uart_dev, uart_rx_cb, NULL);
     uart_irq_rx_enable(uart_dev);
 
@@ -395,7 +390,7 @@ void main(void) {
         }
         enable_cte_rx();
 
-        /* Disable scan to cleanup output */
+        // Disable scan to cleanup output
         scan_disable();
 
         err = k_sem_take(&sem_per_sync_lost, K_FOREVER);

@@ -28,13 +28,14 @@ static const struct bt_data ad[] = {
                   BT_LE_SUPP_FEAT_24_ENCODE(DF_FEAT_ENABLED)),
 };
 
-/* Latency set to zero, to enforce PDU exchange every connection event */
+// Latency set to zero, to enforce PDU exchange every connection event
 #define CONN_LATENCY 0U
-/* Interval used to run CTE request procedure periodically.
- * Value is a number of connection events.
- */
+
+// Interval used to run CTE request procedure periodically.
+// Value is a number of connection events.
+
 #define CTE_REQ_INTERVAL (CONN_LATENCY + 10U)
-/* Length of CTE in unit of 8 us */
+// Length of CTE in unit of 8 us
 #define CTE_LEN (0x14U)
 
 static void conn_phy_update(struct bt_conn *conn) {

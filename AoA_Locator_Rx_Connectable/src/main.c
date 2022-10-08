@@ -17,15 +17,17 @@
 #include <zephyr.h>
 #include <zephyr/types.h>
 
-/* Latency set to zero, to enforce PDU exchange every connection event */
+// Increased latency, to give time for PDU reception on receiver side
 #define CONN_LATENCY 40U
-/* Arbitrary selected timeout value */
+
+// Arbitrary selected timeout value
 #define CONN_TIMEOUT 1000U
-/* Interval used to run CTE request procedure periodically.
- * Value is a number of connection events.
- */
+
+// Interval used to run CTE request procedure periodically.
+// Value is a number of connection events.
 #define CTE_REQ_INTERVAL (CONN_LATENCY + 10U)
-/* Length of CTE in unit of 8 us */
+
+// Length of CTE in unit of 8 us
 #define CTE_LEN (0x14U)
 
 #define PATTERN_LIMIT 30
@@ -37,21 +39,19 @@ static const struct bt_le_conn_param conn_params =
     BT_LE_CONN_PARAM_INIT(BT_GAP_INIT_CONN_INT_MIN, BT_GAP_INIT_CONN_INT_MAX,
                           CONN_LATENCY, CONN_TIMEOUT);
 
-/*
- * Antenna patterns for ISP AoA Demo Kit
- * ANT_1    -> 0x5
- * ANT_2    -> 0x6
- * ANT_3    -> 0x4
- * ANT_4    -> 0x9
- * ANT_5    -> 0xA
- * ANT_6    -> 0x8
- * ANT_7    -> 0xD
- * ANT_8    -> 0xE
- * ANT_9    -> 0xC
- * ANT_10   -> 0x1
- * ANT_11   -> 0x2
- * ANT_12   -> 0x0
- */
+// Antenna patterns for ISP AoA Demo Kit
+// ANT_1    -> 0x5
+// ANT_2    -> 0x6
+// ANT_3    -> 0x4
+// ANT_4    -> 0x9
+// ANT_5    -> 0xA
+// ANT_6    -> 0x8
+// ANT_7    -> 0xD
+// ANT_8    -> 0xE
+// ANT_9    -> 0xC
+// ANT_10   -> 0x1
+// ANT_11   -> 0x2
+// ANT_12   -> 0x0
 
 static const uint8_t ant_patterns[] = {0x6, 0x6};
 
@@ -170,7 +170,7 @@ static void device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
     printk("[DEVICE]: %s, AD evt type %u, AD data len %u, RSSI %i\n", dev, type,
            ad->len, rssi);
 
-    /* We're only interested in connectable events */
+    // We're only interested in connectable events
     if (type == BT_GAP_ADV_TYPE_ADV_IND ||
         type == BT_GAP_ADV_TYPE_ADV_DIRECT_IND) {
         bt_data_parse(ad, eir_found, (void *)addr);
@@ -213,9 +213,8 @@ static void enable_cte_reqest(void) {
 static void start_scan(void) {
     int err;
 
-    /* Use active scanning and disable duplicate filtering to handle any
-     * devices that might update their advertising data at runtime.
-     */
+    // Use active scanning and disable duplicate filtering to handle any
+    // devices that might update their advertising data at runtime.
     struct bt_le_scan_param scan_param = {
         .type = BT_LE_SCAN_TYPE_ACTIVE,
         .options = BT_LE_SCAN_OPT_NONE,
