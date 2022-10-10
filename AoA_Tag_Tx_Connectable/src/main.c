@@ -83,7 +83,7 @@ static void connected(struct bt_conn *conn, uint8_t err) {
         printk("Connected\n");
     }
 
-    conn_phy_update(conn);
+    // conn_phy_update(conn);
     enable_cte_response(conn);
 }
 

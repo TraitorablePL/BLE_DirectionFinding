@@ -10,15 +10,17 @@
 #include <bluetooth/gatt.h>
 #include <bluetooth/hci.h>
 #include <bluetooth/uuid.h>
+#include <drivers/uart.h>
 #include <errno.h>
 #include <stddef.h>
 #include <sys/byteorder.h>
 #include <sys/printk.h>
+#include <sys/reboot.h>
 #include <zephyr.h>
 #include <zephyr/types.h>
 
 // Increased latency, to give time for PDU reception on receiver side
-#define CONN_LATENCY 40U
+#define CONN_LATENCY 0U
 
 // Arbitrary selected timeout value
 #define CONN_TIMEOUT 1000U
@@ -33,6 +35,20 @@
 #define PATTERN_LIMIT 30
 
 #define DF_FEAT_ENABLED BIT64(BT_LE_FEAT_BIT_CONN_CTE_RESP)
+
+static void phy_update(struct bt_conn *conn,
+                       const struct bt_conn_le_phy_param *param) {
+    int err;
+    err = bt_conn_le_phy_update(conn, param);
+
+    printk("Update connection PHY params...");
+
+    if (err) {
+        printk("failed (err %d)\n", err);
+        return;
+    }
+    printk("success.\n");
+}
 
 static struct bt_conn *default_conn;
 static const struct bt_le_conn_param conn_params =
@@ -122,13 +138,59 @@ static const char *packet_status2str(uint8_t status) {
             return "Unknown";
     }
 }
+///////////////////////////////////
+//// UART
+///////////////////////////////////
+
+#define UART_DEVICE_NODE DT_CHOSEN(zephyr_shell_uart)
+#define MSG_SIZE 32
+
+static const struct device *uart_dev = DEVICE_DT_GET(UART_DEVICE_NODE);
+
+static char rx_buf[MSG_SIZE];
+static int rx_buf_pos;
+
+static void perform_command(char *cmd) {
+    if (strcmp(cmd, "reset") == 0) {
+        sys_reboot(SYS_REBOOT_COLD);
+    } else if (strcmp(cmd, "1") == 0 && default_conn != NULL) {
+        // TODO: Crashes MCU! To try with delayed routine
+        printk("Activate 1M PHY\n");
+        phy_update(default_conn, BT_CONN_LE_PHY_PARAM_1M);
+    } else if (strcmp(cmd, "2") == 0 && default_conn != NULL) {
+        printk("Activate 2M PHY\n");
+        // TODO: Crashes MCU! To try with delayed routine
+        phy_update(default_conn, BT_CONN_LE_PHY_PARAM_2M);
+    } else {
+    }
+}
+
+static void uart_rx_cb(const struct device *dev, void *user_data) {
+    uint8_t c;
+
+    if (!uart_irq_update(uart_dev)) {
+        return;
+    }
+
+    while (uart_irq_rx_ready(uart_dev)) {
+        uart_fifo_read(uart_dev, &c, 1);
+
+        if ((c == '\n' || c == '\r') && rx_buf_pos > 0) {
+            rx_buf[rx_buf_pos] = '\0';
+            perform_command(rx_buf);
+            rx_buf_pos = 0;
+        } else if (rx_buf_pos < (sizeof(rx_buf) - 1)) {
+            rx_buf[rx_buf_pos++] = c;
+        }
+    }
+}
 
 static bool eir_found(struct bt_data *data, void *user_data) {
     bt_addr_le_t *addr = user_data;
     uint64_t u64 = 0U;
     int err;
 
-    printk("[AD]: %u data_len %u\n", data->type, data->data_len);
+    // printk("[AD]: %u data_len %u\n", data->type, data->data_len);
 
     switch (data->type) {
         case BT_DATA_LE_SUPPORTED_FEATURES:
@@ -177,7 +239,7 @@ static void device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
     }
 }
 
-static void enable_cte_reqest(void) {
+static void disable_cte_request(void) {
     int err;
 
     const struct bt_df_conn_cte_rx_param cte_rx_params = {
@@ -193,21 +255,54 @@ static void enable_cte_reqest(void) {
         .cte_type = BT_DF_CTE_TYPE_AOA,
     };
 
-    printk("Enable receiving of CTE...\n");
+    printk("Enable receiving of CTE...");
     err = bt_df_conn_cte_rx_enable(default_conn, &cte_rx_params);
     if (err) {
         printk("failed (err %d)\n", err);
         return;
     }
-    printk("success. CTE receive enabled.\n");
+    printk("success.");
 
-    printk("Request CTE from peer device...\n");
+    printk("Request CTE from peer device...");
     err = bt_df_conn_cte_req_enable(default_conn, &cte_req_params);
     if (err) {
         printk("failed (err %d)\n", err);
         return;
     }
-    printk("success. CTE request enabled.\n");
+    printk("success.\n");
+}
+
+static void enable_cte_request(void) {
+    int err;
+
+    const struct bt_df_conn_cte_rx_param cte_rx_params = {
+        .cte_types = BT_DF_CTE_TYPE_ALL,
+        .slot_durations = 0x1,
+        .num_ant_ids = ARRAY_SIZE(ant_patterns),
+        .ant_ids = ant_patterns,
+    };
+
+    const struct bt_df_conn_cte_req_params cte_req_params = {
+        .interval = CTE_REQ_INTERVAL,
+        .cte_length = CTE_LEN,
+        .cte_type = BT_DF_CTE_TYPE_AOA,
+    };
+
+    printk("Enable receiving of CTE...");
+    err = bt_df_conn_cte_rx_enable(default_conn, &cte_rx_params);
+    if (err) {
+        printk("failed (err %d)\n", err);
+        return;
+    }
+    printk("success.");
+
+    printk("Request CTE from peer device...");
+    err = bt_df_conn_cte_req_enable(default_conn, &cte_req_params);
+    if (err) {
+        printk("failed (err %d)\n", err);
+        return;
+    }
+    printk("success.\n");
 }
 
 static void start_scan(void) {
@@ -248,8 +343,10 @@ static void connected(struct bt_conn *conn, uint8_t conn_err) {
 
     printk("Connected: %s\n", addr);
 
+    // phy_update(default_conn, BT_CONN_LE_PHY_PARAM_2M);
+
     if (conn == default_conn) {
-        enable_cte_reqest();
+        enable_cte_request();
     }
 }
 
@@ -272,19 +369,6 @@ static void disconnected(struct bt_conn *conn, uint8_t reason) {
 
 static void cte_recv_cb(struct bt_conn *conn,
                         struct bt_df_conn_iq_samples_report const *report) {
-    // char addr[BT_ADDR_LE_STR_LEN];
-
-    // bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-    // if (report->err == BT_DF_IQ_REPORT_ERR_SUCCESS) {
-    //     printk(
-    //         "CTE[%s]: samples count %d, cte type %s, slot durations: %u [us],
-    //         " "packet status %s, RSSI %i\n", addr, report->sample_count,
-    //         cte_type2str(report->cte_type), report->slot_durations,
-    //         packet_status2str(report->packet_status), report->rssi);
-    // } else {
-    //     printk("CTE[%s]: request failed, err %u\n", addr, report->err);
-    // }
     printk(
         "${\"Pattern\":\"%s\",\"Channel\":%d,\"PHY\":%s,\"Samples\":%d,"
         "\"Slot\":\"%uus\","
@@ -309,6 +393,15 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 
 void main(void) {
     int err;
+
+    if (!device_is_ready(uart_dev)) {
+        printk("UART device not found!");
+        return;
+    }
+
+    // configure interrupt and callback to receive data
+    uart_irq_callback_user_data_set(uart_dev, uart_rx_cb, NULL);
+    uart_irq_rx_enable(uart_dev);
 
     err = bt_enable(NULL);
     if (err) {
