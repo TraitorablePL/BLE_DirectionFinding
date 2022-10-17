@@ -68,11 +68,23 @@ static const struct bt_le_conn_param conn_params =
 // ANT_10   -> 0x1
 // ANT_11   -> 0x2
 // ANT_12   -> 0x0
+// GND      -> 0x3, 0x7, 0xB, 0xF
 
-static const uint8_t ant_patterns[] = {0x6, 0x6};
+// Simple horizontal
+static const uint8_t ant_patterns[] = {0x2, 0x2, 0x0, 0x5, 0x6,
+                                       0xA, 0x8, 0xD, 0xE};
 
-// static const uint8_t ant_patterns[] = {0x2, 0x0, 0x5, 0x6, 0x1, 0x4,
-//                                        0xC, 0x9, 0xE, 0xD, 0x8, 0xA};
+// Simple vertical
+// static const uint8_t ant_patterns[] = {0x6, 0x6, 0x4, 0x9, 0xA, 0xE, 0xC,
+// 0x1, 0x2};
+
+// Complex
+// static const uint8_t ant_patterns[] = {0x2, 0x2, 0x0, 0x5, 0x6, 0x4, 0x9,
+// 0xA, 0x8, 0xD, 0xE, 0xC, 0x1};
+
+// Complex with corner calibration
+// static const uint8_t ant_patterns[] = {0x2, 0x2, 0x0, 0x5, 0x6, 0x6, 0x4,
+// 0x9, 0xA, 0xA, 0x8, 0xD, 0xE, 0xE, 0xC, 0x1, 0x2};
 
 static void start_scan(void);
 
@@ -153,15 +165,16 @@ static int rx_buf_pos;
 static void perform_command(char *cmd) {
     if (strcmp(cmd, "reset") == 0) {
         sys_reboot(SYS_REBOOT_COLD);
-    } else if (strcmp(cmd, "1") == 0 && default_conn != NULL) {
-        // TODO: Crashes MCU! To try with delayed routine
-        printk("Activate 1M PHY\n");
-        phy_update(default_conn, BT_CONN_LE_PHY_PARAM_1M);
-    } else if (strcmp(cmd, "2") == 0 && default_conn != NULL) {
-        printk("Activate 2M PHY\n");
-        // TODO: Crashes MCU! To try with delayed routine
-        phy_update(default_conn, BT_CONN_LE_PHY_PARAM_2M);
-    } else {
+    }
+    // else if (strcmp(cmd, "1") == 0 && default_conn != NULL) {
+    //     // TODO: Crashes MCU! To try with delayed routine
+    //     printk("Activate 1M PHY\n");
+    //     phy_update(default_conn, BT_CONN_LE_PHY_PARAM_1M);
+    // } else if (strcmp(cmd, "2") == 0 && default_conn != NULL) {
+    //     printk("Activate 2M PHY\n");
+    //     // TODO: Crashes MCU! To try with delayed routine
+    //     phy_update(default_conn, BT_CONN_LE_PHY_PARAM_2M);
+    else {
     }
 }
 
@@ -343,7 +356,8 @@ static void connected(struct bt_conn *conn, uint8_t conn_err) {
 
     printk("Connected: %s\n", addr);
 
-    // phy_update(default_conn, BT_CONN_LE_PHY_PARAM_2M);
+    // phy_update(default_conn, BT_CONN_LE_PHY_PARAM_1M);
+    phy_update(default_conn, BT_CONN_LE_PHY_PARAM_2M);
 
     if (conn == default_conn) {
         enable_cte_request();
