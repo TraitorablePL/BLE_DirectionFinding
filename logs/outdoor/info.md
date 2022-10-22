@@ -35,3 +35,44 @@
 - log_2022.08.15_15.47.03.json - distance 8m, -45 deg, on the left of antenna
 - log_2022.08.15_15.49.26.json - distance 8m, 0 deg, in front of antenna
 - log_2022.08.15_15.52.09.json - distance 8m, 15 deg, on the right of antenna
+
+
+# Updated measurements with correct GPIO configuration
+
+## Simple Horizontal 1M PHY
+0 deg, max height - log_2022.10.17_15.50.49.json
+30 deg, max height - log_2022.10.17_15.56.05.json
+45 deg, max height - log_2022.10.17_15.59.47.json
+60 deg, max height - log_2022.10.17_16.02.49.json
+90 deg, max height - log_2022.10.17_16.05.52.json
+120 deg, max height - log_2022.10.17_16.10.11.json
+135 deg, max height - log_2022.10.17_16.17.51.json
+150 deg, max height - log_2022.10.17_16.20.43.json (connection problems)
+180 deg, max height - log_2022.10.17_16.24.32.json (no connection)
+0 deg, min height - log_2022.10.17_16.30.27.json
+30 deg, min height - log_2022.10.17_16.33.30.json
+45 deg, min height - log_2022.10.17_16.37.09.json
+60 deg, min height - log_2022.10.17_16.39.04.json
+90 deg, min height - log_2022.10.17_16.41.01.json
+120 deg, min height - log_2022.10.17_16.42.49.json
+135 deg, min height - log_2022.10.17_16.45.04.json
+150 deg, min height - log_2022.10.17_16.47.14.json (connection problems)
+180 deg, min height - log_2022.10.17_16.49.52.json (connection problems)
+#TODO repeat with constant antenna polarisation
+
+## Simple Vertical 1M PHY
+0 deg, min height - log_2022.10.17_17.04.15.json
+45 deg, min height - log_2022.10.17_17.09.40.json
+90 deg, min height - log_2022.10.17_17.11.54.json
+135 deg, min height - 
+180 deg, min height - 
+0 deg, mid height - 
+45 deg, mid height - 
+90 deg, mid height - 
+135 deg, mid height - 
+180 deg, mid height - 
+0 deg, max height - 
+45 deg, max height - 
+90 deg, max height - 
+135 deg, max height - 
+180 deg, max height - 

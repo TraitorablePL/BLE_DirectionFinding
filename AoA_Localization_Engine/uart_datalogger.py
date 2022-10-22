@@ -149,7 +149,8 @@ if __name__ == "__main__":
             sample = {
                 "Timediff" : None,
                 "RSSI" : None,
-                "IQ" : None
+                "Channel" : None,
+                "IQ" : None,
             }
 
             line = Logger.readline()
@@ -173,6 +174,7 @@ if __name__ == "__main__":
                     log_data["Records"].append(sample)
                     state = "iq_sampling"
 
+        print(Logger.start_time.strftime('%Y.%m.%d_%H.%M.%S'));
         print(f"Logs saved to log_{Logger.start_time.strftime('%Y.%m.%d_%H.%M.%S')}.json")
         Logger.write_to_file(log_data)
 

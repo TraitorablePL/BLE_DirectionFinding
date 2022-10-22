@@ -71,12 +71,11 @@ static const struct bt_le_conn_param conn_params =
 // GND      -> 0x3, 0x7, 0xB, 0xF
 
 // Simple horizontal
-static const uint8_t ant_patterns[] = {0x2, 0x2, 0x0, 0x5, 0x6,
-                                       0xA, 0x8, 0xD, 0xE};
+// static const uint8_t ant_patterns[] = {0x2, 0x2, 0x0, 0x5, 0x6,
+//                                        0xA, 0x8, 0xD, 0xE};
 
 // Simple vertical
-// static const uint8_t ant_patterns[] = {0x6, 0x6, 0x4, 0x9, 0xA, 0xE, 0xC,
-// 0x1, 0x2};
+static const uint8_t ant_patterns[] = {0x6, 0x6, 0x4, 0x9, 0xA, 0xE, 0xC, 0x1, 0x2};
 
 // Complex
 // static const uint8_t ant_patterns[] = {0x2, 0x2, 0x0, 0x5, 0x6, 0x4, 0x9,
@@ -341,6 +340,7 @@ static void start_scan(void) {
 
 static void connected(struct bt_conn *conn, uint8_t conn_err) {
     char addr[BT_ADDR_LE_STR_LEN];
+    int interval = 10;
 
     bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
@@ -354,10 +354,12 @@ static void connected(struct bt_conn *conn, uint8_t conn_err) {
         return;
     }
 
-    printk("Connected: %s\n", addr);
+    printk("${\"Addr\":\"%s\"}\n", addr);
+    // printk("${\"Addr\":\"%s\",\"Interval\":\"%ums\",\"PHY\":\"%s\"}\n", le_addr,
+    //        , phy2str(info->phy));
 
-    // phy_update(default_conn, BT_CONN_LE_PHY_PARAM_1M);
-    phy_update(default_conn, BT_CONN_LE_PHY_PARAM_2M);
+    phy_update(default_conn, BT_CONN_LE_PHY_PARAM_1M);
+    // phy_update(default_conn, BT_CONN_LE_PHY_PARAM_2M);
 
     if (conn == default_conn) {
         enable_cte_request();
@@ -384,7 +386,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason) {
 static void cte_recv_cb(struct bt_conn *conn,
                         struct bt_df_conn_iq_samples_report const *report) {
     printk(
-        "${\"Pattern\":\"%s\",\"Channel\":%d,\"PHY\":%s,\"Samples\":%d,"
+        "${\"Pattern\":\"%s\",\"Channel\":%d,\"PHY\":\"%s\",\"Samples\":%d,"
         "\"Slot\":\"%uus\","
         "\"RSSI\":%i,\"IQ\":[",
         ant_pattern2str(), report->chan_idx, phy2str(report->rx_phy),
@@ -424,6 +426,7 @@ void main(void) {
     }
 
     printk("Bluetooth initialized\n");
+    printk("Init device tracking\n");
 
     start_scan();
 }
