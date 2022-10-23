@@ -159,11 +159,13 @@ if __name__ == "__main__":
                 data = dict(json.loads(line[1:]))
 
                 if(state == "init" and "Addr" in data):
+                    print("State: Init")
                     header["Timestart"] = Logger.timestamp()
                     Logger.update_tokens(header, data)
                     state = "packet_info"
 
                 elif(state == "packet_info" and "Pattern" in data):
+                    print("State: Packet Info")
                     Logger.update_tokens(header, data)
                     log_data["Header"] = header
                     state = "iq_sampling"
@@ -174,7 +176,6 @@ if __name__ == "__main__":
                     log_data["Records"].append(sample)
                     state = "iq_sampling"
 
-        print(Logger.start_time.strftime('%Y.%m.%d_%H.%M.%S'));
         print(f"Logs saved to log_{Logger.start_time.strftime('%Y.%m.%d_%H.%M.%S')}.json")
         Logger.write_to_file(log_data)
 
@@ -182,3 +183,5 @@ if __name__ == "__main__":
         print("Failed to find header msg")
 
     Logger.disconnect()
+
+    #TODO sometimes wrong decode at beggining of stream or there is no timestart initialized

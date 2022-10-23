@@ -58,21 +58,122 @@
 135 deg, min height - log_2022.10.17_16.45.04.json
 150 deg, min height - log_2022.10.17_16.47.14.json (connection problems)
 180 deg, min height - log_2022.10.17_16.49.52.json (connection problems)
-#TODO repeat with constant antenna polarisation
 
 ## Simple Vertical 1M PHY
 0 deg, min height - log_2022.10.17_17.04.15.json
 45 deg, min height - log_2022.10.17_17.09.40.json
 90 deg, min height - log_2022.10.17_17.11.54.json
-135 deg, min height - 
-180 deg, min height - 
-0 deg, mid height - 
-45 deg, mid height - 
-90 deg, mid height - 
-135 deg, mid height - 
-180 deg, mid height - 
+
+# Antenna polarisation aspect considered
+
+## Simple Horizontal 1M PHY
+0 deg, max height - log_2022.10.23_13.49.34.json
+30 deg, max height - log_2022.10.23_13.52.22.json
+45 deg, max height - log_2022.10.23_13.54.57.json
+60 deg, max height - log_2022.10.23_13.57.36.json
+90 deg, max height - log_2022.10.23_13.59.39.json
+120 deg, max height - log_2022.10.23_14.01.51.json
+135 deg, max height - log_2022.10.23_14.09.12.json
+150 deg, max height - log_2022.10.23_14.26.24.json
+180 deg, max height - no conn
+0 deg, min height - log_2022.10.23_14.40.58.json
+30 deg, min height - log_2022.10.23_14.43.08.json
+45 deg, min height - log_2022.10.23_14.45.14.json
+60 deg, min height - log_2022.10.23_14.48.41.json
+90 deg, min height - log_2022.10.23_14.51.00.json
+120 deg, min height - log_2022.10.23_14.59.18.json
+135 deg, min height - log_2022.10.23_15.01.21.json
+150 deg, min height - log_2022.10.23_15.06.36.json
+180 deg, min height - no conn
+
+## Simple Vertical 1M PHY
+0 deg, min height - log_2022.10.23_15.18.07.json
+45 deg, min height - log_2022.10.23_15.20.49.json
+90 deg, min height - log_2022.10.23_15.23.09.json
+135 deg, min height - log_2022.10.23_15.26.43.json
+180 deg, min height - log_2022.10.23_15.30.22.json
+0 deg, mid height - log_2022.10.23_15.33.08.json
+45 deg, mid height - log_2022.10.23_15.36.19.json
+90 deg, mid height - log_2022.10.23_15.38.47.json
+135 deg, mid height - log_2022.10.23_15.40.32.json
+180 deg, mid height - log_2022.10.23_15.42.33.json
+0 deg, max height - log_2022.10.23_15.45.19.json
+45 deg, max height - log_2022.10.23_15.47.30.json
+90 deg, max height - log_2022.10.23_15.49.38.json
+135 deg, max height - log_2022.10.23_15.59.42.json
+180 deg, max height - log_2022.10.23_16.01.36.json
+
+## Complex 1M PHY
+0 deg, min height - log_2022.10.23_16.48.26.json
+45 deg, min height - log_2022.10.23_16.50.14.json
+90 deg, min height - log_2022.10.23_16.52.07.json
+135 deg, min height - log_2022.10.23_16.54.56.json
+180 deg, min height - log_2022.10.23_16.57.49.json
+0 deg, mid height - log_2022.10.23_16.37.30.json
+45 deg, mid height - log_2022.10.23_16.39.48.json
+90 deg, mid height - log_2022.10.23_16.42.30.json
+135 deg, mid height - log_2022.10.23_16.44.25.json
+180 deg, mid height - no CTE
+0 deg, max height - log_2022.10.23_16.07.00.json
+45 deg, max height - log_2022.10.23_16.09.54.json
+90 deg, max height - log_2022.10.23_16.11.45.json
+135 deg, max height - log_2022.10.23_16.13.55.json
+180 deg, max height - no CTE
+
+## Complex with corner callibration 1M PHY
 0 deg, max height - 
+30 deg, max height - 
 45 deg, max height - 
+60 deg, max height - 
 90 deg, max height - 
+120 deg, max height -
 135 deg, max height - 
+150 deg, max height - 
 180 deg, max height - 
+0 deg, mid height - 
+30 deg, mid height - 
+45 deg, mid height - 
+60 deg, mid height - 
+90 deg, mid height - 
+120 deg, mid height -
+135 deg, mid height - 
+150 deg, mid height - 
+180 deg, mid height - 
+0 deg, min height - 
+30 deg, min height - 
+45 deg, min height - 
+60 deg, min height - 
+90 deg, min height - 
+120 deg, min height - 
+135 deg, min height - 
+150 deg, min height - 
+180 deg, min height - 
+
+## Complex with corner callibration 2M PHY
+0 deg, max height - 
+30 deg, max height - 
+45 deg, max height - 
+60 deg, max height - 
+90 deg, max height - 
+120 deg, max height -
+135 deg, max height - 
+150 deg, max height - 
+180 deg, max height - 
+0 deg, mid height - 
+30 deg, mid height - 
+45 deg, mid height - 
+60 deg, mid height - 
+90 deg, mid height - 
+120 deg, mid height -
+135 deg, mid height - 
+150 deg, mid height - 
+180 deg, mid height - 
+0 deg, min height - 
+30 deg, min height - 
+45 deg, min height - 
+60 deg, min height - 
+90 deg, min height - 
+120 deg, min height - 
+135 deg, min height - 
+150 deg, min height - 
+180 deg, min height - 
