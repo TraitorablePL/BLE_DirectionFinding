@@ -1,10 +1,8 @@
-import sys
-import time
 import threading
 import matplotlib
 import numpy as np
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtWidgets
 from PyQt5.QtCore import *
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
@@ -16,18 +14,6 @@ from mpl_toolkits.axisartist.axislines import AxesZero
 
 class Communicate(QObject):
     signal = pyqtSignal(object)
-
-def signal_worker(dataReady_callback):
-    src = Communicate()
-    src.signal.connect(dataReady_callback)
-
-    x = [-60, -45, -30, 0, 30, 45, 60]
-    
-    i = 0
-    while(i < len(x)):
-        time.sleep(0.5)
-        src.signal.emit((x[i],x[i]))
-        i += 1
 
 class PlotCanvas(FigureCanvasQTAgg, TimedAnimation):
 
@@ -87,18 +73,17 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
-
+        self.close = threading.Event()
         self.sc = PlotCanvas(self, width=10, height=10, dpi=100)
         self.setCentralWidget(self.sc)
-        self.signal_thread = threading.Thread(name = 'signal_thread', target = signal_worker, daemon = True, args = (self.dataReady_callback,))
-        self.signal_thread.start()
         self.show()
 
-    def dataReady_callback(self, values):
-        self.sc.update_marker(values)
+    def closeEvent(self, event):
+        print("Close event")
+        self.close.set()
         return
 
-if __name__== '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    myGUI = MainWindow()
-    sys.exit(app.exec())
+    def update_callback(self, values):
+        self.sc.update_marker(values)
+        return
+        

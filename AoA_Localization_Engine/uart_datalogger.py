@@ -7,6 +7,8 @@ import threading
 import jsbeautifier
 import pathlib
 
+from queue import Queue
+
 class UART_Logger:
     def __init__(self, port='COM4', baudrate='115200'):
         self.port = port
@@ -35,7 +37,7 @@ class UART_Logger:
     def _trigger(self, event):
         while not event.isSet():
             line = self.readline()
-            if(line == 'Init device tracking'):
+            if(line == 'Bluetooth initialized'):
                 break
     
     # Signal when start header found in stream
@@ -57,7 +59,14 @@ class UART_Logger:
 
     # Read line from stream without '\r\n'
     def readline(self):
-        return self.serial.read_until(b'\r\n')[:-2].decode("utf-8")
+        try:
+            out = self.serial.read_until(b'\r\n')[:-2].decode("utf-8")
+        except UnicodeDecodeError:
+            print("NOK Decode")
+            return ""
+        else:
+            return out
+        
 
     # Get current time and date
     def timestamp(self):
@@ -103,85 +112,73 @@ class UART_Logger:
             if key in msg_type:
                 msg_type[key] = data[key]
 
-# User input thread
-def user_input(user_event):
-    while True:
-        data = input()
-        if(data == "exit"):
-            user_event.set()
-            break
-        else:
-            print("Type 'exit' to end logging")
+class DataLogger(threading.Thread):
 
-# Program core
-if __name__ == "__main__":
-    user_event = threading.Event()
-    user_thread = threading.Thread(target=user_input, args=(user_event,))
-    user_thread.start()
+    def __init__(self, close_event):
+        self.close = close_event
+        self.data = {"Header" : None, "Records" : []}
+        self.queue = Queue()
+        threading.Thread.__init__(self)
 
-    log_data = {
-        "Header" : None,
-        "Records" : []
-    }
+    def run(self):
+        state = "init"
 
-    Logger = UART_Logger()
-    Logger.connect()
-    state = "init"
+        UART = UART_Logger()
+        UART.connect()
+        UART.mcu_reset()
 
-    Logger.mcu_reset()
-    print("Device reset. Waiting for header...")
+        if(UART.trigger(10)):
+            print("Header found. Starting logging...")
 
-    if(Logger.trigger(10)):
-        print("Header found. Starting logging...")
-        print("Type 'exit' to end logging")
-
-        header = {
-            "Timestart" : None,
-            "Addr" : None,
-            "Interval" : None,
-            "PHY" : None,
-            "Pattern" : None,
-            "Samples" : None,
-            "Slot" : None
-        }
-
-        while (not user_event.isSet()):
-            sample = {
-                "Timediff" : None,
-                "RSSI" : None,
-                "Channel" : None,
-                "IQ" : None,
+            header = {
+                "Timestart" : None,
+                "Addr" : None,
+                "Interval" : None,
+                "PHY" : None,
+                "Pattern" : None,
+                "Samples" : None,
+                "Slot" : None
             }
 
-            line = Logger.readline()
+            while (not self.close.isSet()):
+                sample = {
+                    "Timediff" : None,
+                    "RSSI" : None,
+                    "Channel" : None,
+                    "IQ" : None,
+                }
 
-            if(line[0] == "$"):
-                data = dict(json.loads(line[1:]))
+                line = UART.readline()
+                print(line)
 
-                if(state == "init" and "Addr" in data):
-                    print("State: Init")
-                    header["Timestart"] = Logger.timestamp()
-                    Logger.update_tokens(header, data)
-                    state = "packet_info"
+                if(line[0] == "$"):
+                    data = dict(json.loads(line[1:]))
 
-                elif(state == "packet_info" and "Pattern" in data):
-                    print("State: Packet Info")
-                    Logger.update_tokens(header, data)
-                    log_data["Header"] = header
-                    state = "iq_sampling"
+                    if(state == "init" and "Addr" in data):
+                        print("State: Init")
+                        header["Timestart"] = UART.timestamp()
+                        UART.update_tokens(header, data)
+                        state = "packet_info"
 
-                elif(state == "iq_sampling" and "Pattern" in data):
-                    sample["Timediff"] = Logger.timestamp_diff()
-                    Logger.update_tokens(sample, data)
-                    log_data["Records"].append(sample)
-                    state = "iq_sampling"
+                    elif(state == "packet_info" and "Pattern" in data):
+                        print("State: Packet Info")
+                        UART.update_tokens(header, data)
+                        self.data["Header"] = header
+                        state = "iq_sampling"
 
-        print(f"Logs saved to log_{Logger.start_time.strftime('%Y.%m.%d_%H.%M.%S')}.json")
-        Logger.write_to_file(log_data)
+                    elif(state == "iq_sampling" and "Pattern" in data):
+                        sample["Timediff"] = UART.timestamp_diff()
+                        UART.update_tokens(sample, data)
+                        self.data["Records"].append(sample)
+                        self.queue.put(sample)
+                        state = "iq_sampling"
 
-    else:
-        print("Failed to find header msg")
+            print(f"Logs saved to log_{UART.start_time.strftime('%Y.%m.%d_%H.%M.%S')}.json")
+            UART.write_to_file(self.data)
 
-    Logger.disconnect()
+        else:
+            print("Failed to find header msg")
+
+        UART.disconnect()
 
     #TODO sometimes wrong decode at beggining of stream or there is no timestart initialized
