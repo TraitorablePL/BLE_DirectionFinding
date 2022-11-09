@@ -123,7 +123,7 @@ class DataLogger(threading.Thread):
     def run(self):
         state = "init"
 
-        UART = UART_Logger()
+        UART = UART_Logger("COM4", 460800)
         UART.connect()
         UART.mcu_reset()
 

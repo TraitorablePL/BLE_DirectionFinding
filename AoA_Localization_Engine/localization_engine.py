@@ -86,7 +86,7 @@ class Localization():
                 else:
                     self.calc_angle(sampPeriodDiff[i], inverted, elevation)
 
-        return (self.calc_mean(azimuth) - 90, self.calc_mean(elevation) - 90)
+        return (self.calc_mean(azimuth), self.calc_mean(elevation))
       
     ## MUSIC algorithm for localization
     def locate_MUSIC(self):

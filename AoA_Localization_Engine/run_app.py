@@ -17,8 +17,11 @@ def updateWorker(event_close, queue):
 
     while not event_close.isSet():
         (azim, elev) = localizer.locate_basic(queue.get())
-        print(f"Azimuth:{azim}, Elevation:{elev}")
-        src.signal.emit((azim, elev))
+        if(azim != 0 or elev != 0):
+            azim -= 90
+            elev -= 90
+            print(f"Azimuth:{azim}, Elevation:{elev}")
+            src.signal.emit((azim, elev))
         time.sleep(0.1) # Release some time for another work
     print("Updater done!")
 
