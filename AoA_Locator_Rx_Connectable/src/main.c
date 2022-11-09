@@ -75,15 +75,17 @@ static const struct bt_le_conn_param conn_params =
 //                                        0xA, 0x8, 0xD, 0xE};
 
 // Simple vertical
-static const uint8_t ant_patterns[] = {0x6, 0x6, 0x4, 0x9, 0xA, 0xE, 0xC, 0x1, 0x2};
+// static const uint8_t ant_patterns[] = {0x6, 0x6, 0x4, 0x9, 0xA,
+//                                        0xE, 0xC, 0x1, 0x2};
 
 // Complex
 // static const uint8_t ant_patterns[] = {0x2, 0x2, 0x0, 0x5, 0x6, 0x4, 0x9,
 // 0xA, 0x8, 0xD, 0xE, 0xC, 0x1};
 
 // Complex with corner calibration
-// static const uint8_t ant_patterns[] = {0x2, 0x2, 0x0, 0x5, 0x6, 0x6, 0x4,
-// 0x9, 0xA, 0xA, 0x8, 0xD, 0xE, 0xE, 0xC, 0x1, 0x2};
+static const uint8_t ant_patterns[] = {0x2, 0x2, 0x0, 0x5, 0x6, 0x6,
+                                       0x4, 0x9, 0xA, 0xA, 0x8, 0xD,
+                                       0xE, 0xE, 0xC, 0x1, 0x2};
 
 static void start_scan(void);
 
@@ -232,7 +234,6 @@ static bool eir_found(struct bt_data *data, void *user_data) {
             }
             return false;
     }
-
     return true;
 }
 
@@ -241,8 +242,8 @@ static void device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
     char dev[BT_ADDR_LE_STR_LEN];
 
     bt_addr_le_to_str(addr, dev, sizeof(dev));
-    printk("[DEVICE]: %s, AD evt type %u, AD data len %u, RSSI %i\n", dev, type,
-           ad->len, rssi);
+    // printk("[DEVICE]: %s, AD evt type %u, AD data len %u, RSSI %i\n", dev,
+    // type, ad->len, rssi);
 
     // We're only interested in connectable events
     if (type == BT_GAP_ADV_TYPE_ADV_IND ||
@@ -354,12 +355,14 @@ static void connected(struct bt_conn *conn, uint8_t conn_err) {
         return;
     }
 
-    printk("${\"Addr\":\"%s\"}\n", addr);
-    // printk("${\"Addr\":\"%s\",\"Interval\":\"%ums\",\"PHY\":\"%s\"}\n", le_addr,
+    // printk("${\"Addr\":\"%s\",\"Interval\":\"%ums\",\"PHY\":\"%s\"}\n",
+    // le_addr,
     //        , phy2str(info->phy));
 
     phy_update(default_conn, BT_CONN_LE_PHY_PARAM_1M);
     // phy_update(default_conn, BT_CONN_LE_PHY_PARAM_2M);
+
+    printk("${\"Addr\":\"%s\"}\n", addr);
 
     if (conn == default_conn) {
         enable_cte_request();
@@ -424,9 +427,6 @@ void main(void) {
         printk("Bluetooth init failed (err %d)\n", err);
         return;
     }
-
     printk("Bluetooth initialized\n");
-    printk("Init device tracking\n");
-
     start_scan();
 }
