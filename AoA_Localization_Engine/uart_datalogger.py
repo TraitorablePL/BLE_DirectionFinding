@@ -114,10 +114,10 @@ class UART_Logger:
 
 class DataLogger(threading.Thread):
 
-    def __init__(self, close_event):
+    def __init__(self, close_event, queue):
         self.close = close_event
         self.data = {"Header" : None, "Records" : []}
-        self.queue = Queue()
+        self.queue = queue
         threading.Thread.__init__(self)
 
     def run(self):
@@ -149,7 +149,6 @@ class DataLogger(threading.Thread):
                 }
 
                 line = UART.readline()
-                print(line)
 
                 if(line[0] == "$"):
                     data = dict(json.loads(line[1:]))
@@ -180,5 +179,4 @@ class DataLogger(threading.Thread):
             print("Failed to find header msg")
 
         UART.disconnect()
-
-    #TODO sometimes wrong decode at beggining of stream or there is no timestart initialized
+        print("Logger done!")

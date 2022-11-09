@@ -79,7 +79,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.show()
 
     def closeEvent(self, event):
-        print("Close event")
+        print("GUI done!")
         self.close.set()
         return
 
