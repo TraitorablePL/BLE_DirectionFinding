@@ -18,7 +18,6 @@ class Communicate(QObject):
 class PlotCanvas(FigureCanvasQTAgg, TimedAnimation):
 
     def __init__(self, parent=None, width=10, height=10, dpi=100):
-        
         self.sc = Figure(figsize=(16, 10), dpi=100)
         self.ax = self.sc.add_subplot(axes_class=AxesZero)
         self.x = 0
@@ -64,7 +63,7 @@ class PlotCanvas(FigureCanvasQTAgg, TimedAnimation):
         self._drawn_artists = [self.marker]
         return
 
-    def update_marker(self, values):
+    def updateMarker(self, values):
         self.x = values[0]
         self.y = values[1]
         return
@@ -83,7 +82,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.close.set()
         return
 
-    def update_callback(self, values):
-        self.sc.update_marker(values)
+    def updateCallback(self, values):
+        self.sc.updateMarker(values)
         return
         

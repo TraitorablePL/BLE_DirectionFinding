@@ -13,7 +13,7 @@ def updateWorker(event_close, queue):
     
     localizer = Localization()
     src = Communicate()
-    src.signal.connect(window.update_callback)
+    src.signal.connect(window.updateCallback)
 
     while not event_close.isSet():
         (azim, elev) = localizer.locate_basic(queue.get())
@@ -26,7 +26,6 @@ def updateWorker(event_close, queue):
     print("Updater done!")
 
 if __name__== '__main__':
-
     data_queue = Queue()
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()

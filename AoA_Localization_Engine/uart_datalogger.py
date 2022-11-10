@@ -10,6 +10,7 @@ import pathlib
 from queue import Queue
 
 class UART_Logger:
+
     def __init__(self, port='COM4', baudrate='115200'):
         self.port = port
         self.baudrate = baudrate
@@ -31,7 +32,7 @@ class UART_Logger:
         if(self.serial and not self.serial.is_open):
             self.serial.close()
 
-    def mcu_reset(self):
+    def mcuReset(self):
         self.write("reset\n")
 
     def _trigger(self, event):
@@ -42,16 +43,16 @@ class UART_Logger:
     
     # Signal when start header found in stream
     def trigger(self, timeout) -> bool:
-        isSuccess = True
+        is_success = True
         event = threading.Event()
         worker = threading.Thread(target=self._trigger, args=(event,))
         worker.start()
         worker.join(timeout)
         if(worker.is_alive()):
             event.set()
-            isSuccess = False
+            is_success = False
         worker.join()
-        return isSuccess
+        return is_success
 
     def write(self, str):
         self.serial.write(str.encode('utf-8'))
@@ -66,7 +67,6 @@ class UART_Logger:
             return ""
         else:
             return out
-        
 
     # Get current time and date
     def timestamp(self):
@@ -74,13 +74,13 @@ class UART_Logger:
         return self.start_time.strftime("%Y.%m.%d_%H:%M:%S.%f")
 
     # Get time difference from start
-    def timestamp_diff(self):
+    def timestampDiff(self):
         now = datetime.datetime.now()
         diff = now - self.start_time
         return f"+{diff}"
 
     # Check available COM ports (windows only)
-    def check_ports():
+    def checkPorts():
         if sys.platform.startswith('win'):
             ports = ['COM%s' % (i + 1) for i in range(256)]
         else:
@@ -97,7 +97,7 @@ class UART_Logger:
         return result
 
     # Save captured log into JSON formatted file
-    def write_to_file(self, log_data):
+    def write2File(self, log_data):
         pathlib.Path("logs").mkdir(exist_ok=True)
         with open(f'logs/log_{self.start_time.strftime("%Y.%m.%d_%H.%M.%S")}.json', 'w', encoding='utf-8') as f:
             opts = jsbeautifier.default_options()
@@ -105,7 +105,7 @@ class UART_Logger:
             f.write(jsbeautifier.beautify(json.dumps(log_data), opts))
 
     # Update tokens in dictionary with received UART msg
-    def update_tokens(self, msg_type, data):
+    def updateTokens(self, msg_type, data):
         keys_list = list(data)
         for i in range(len(keys_list)):
             key = keys_list[i]
@@ -125,7 +125,7 @@ class DataLogger(threading.Thread):
 
         UART = UART_Logger("COM4", 460800)
         UART.connect()
-        UART.mcu_reset()
+        UART.mcuReset()
 
         if(UART.trigger(10)):
             print("Header found. Starting logging...")
@@ -156,24 +156,24 @@ class DataLogger(threading.Thread):
                     if(state == "init" and "Addr" in data):
                         print("State: Init")
                         header["Timestart"] = UART.timestamp()
-                        UART.update_tokens(header, data)
+                        UART.updateTokens(header, data)
                         state = "packet_info"
 
                     elif(state == "packet_info" and "Pattern" in data):
                         print("State: Packet Info")
-                        UART.update_tokens(header, data)
+                        UART.updateTokens(header, data)
                         self.data["Header"] = header
                         state = "iq_sampling"
 
                     elif(state == "iq_sampling" and "Pattern" in data):
-                        sample["Timediff"] = UART.timestamp_diff()
-                        UART.update_tokens(sample, data)
+                        sample["Timediff"] = UART.timestampDiff()
+                        UART.updateTokens(sample, data)
                         self.data["Records"].append(sample)
                         self.queue.put(sample)
                         state = "iq_sampling"
 
             print(f"Logs saved to log_{UART.start_time.strftime('%Y.%m.%d_%H.%M.%S')}.json")
-            UART.write_to_file(self.data)
+            UART.write2File(self.data)
 
         else:
             print("Failed to find header msg")
