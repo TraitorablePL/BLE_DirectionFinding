@@ -69,12 +69,12 @@ class UART_Logger:
             return out
 
     # Get current time and date
-    def timestamp(self):
+    def getTimestamp(self):
         self.start_time = datetime.datetime.now()
         return self.start_time.strftime("%Y.%m.%d_%H:%M:%S.%f")
 
     # Get time difference from start
-    def timestampDiff(self):
+    def getTimestampDiff(self):
         now = datetime.datetime.now()
         diff = now - self.start_time
         return f"+{diff}"
@@ -155,7 +155,7 @@ class DataLogger(threading.Thread):
 
                     if(state == "init" and "Addr" in data):
                         print("State: Init")
-                        header["Timestart"] = UART.timestamp()
+                        header["Timestart"] = UART.getTimestamp()
                         UART.updateTokens(header, data)
                         state = "packet_info"
 
@@ -166,7 +166,7 @@ class DataLogger(threading.Thread):
                         state = "iq_sampling"
 
                     elif(state == "iq_sampling" and "Pattern" in data):
-                        sample["Timediff"] = UART.timestampDiff()
+                        sample["Timediff"] = UART.getTimestampDiff()
                         UART.updateTokens(sample, data)
                         self.data["Records"].append(sample)
                         self.queue.put(sample)

@@ -20,14 +20,14 @@
 #include <zephyr/types.h>
 
 // Increased latency, to give time for PDU reception on receiver side
-#define CONN_LATENCY 0U
+#define CONN_LATENCY 5U
 
 // Arbitrary selected timeout value
 #define CONN_TIMEOUT 1000U
 
 // Interval used to run CTE request procedure periodically.
 // Value is a number of connection events.
-#define CTE_REQ_INTERVAL (CONN_LATENCY + 10U)
+#define CTE_REQ_INTERVAL (10U)
 
 // Length of CTE in unit of 8 us
 #define CTE_LEN (0x14U)
@@ -167,16 +167,6 @@ static void perform_command(char *cmd) {
     if (strcmp(cmd, "reset") == 0) {
         sys_reboot(SYS_REBOOT_COLD);
     }
-    // else if (strcmp(cmd, "1") == 0 && default_conn != NULL) {
-    //     // TODO: Crashes MCU! To try with delayed routine
-    //     printk("Activate 1M PHY\n");
-    //     phy_update(default_conn, BT_CONN_LE_PHY_PARAM_1M);
-    // } else if (strcmp(cmd, "2") == 0 && default_conn != NULL) {
-    //     printk("Activate 2M PHY\n");
-    //     // TODO: Crashes MCU! To try with delayed routine
-    //     phy_update(default_conn, BT_CONN_LE_PHY_PARAM_2M);
-    else {
-    }
 }
 
 static void uart_rx_cb(const struct device *dev, void *user_data) {
@@ -203,8 +193,6 @@ static bool eir_found(struct bt_data *data, void *user_data) {
     bt_addr_le_t *addr = user_data;
     uint64_t u64 = 0U;
     int err;
-
-    // printk("[AD]: %u data_len %u\n", data->type, data->data_len);
 
     switch (data->type) {
         case BT_DATA_LE_SUPPORTED_FEATURES:
@@ -242,8 +230,6 @@ static void device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
     char dev[BT_ADDR_LE_STR_LEN];
 
     bt_addr_le_to_str(addr, dev, sizeof(dev));
-    // printk("[DEVICE]: %s, AD evt type %u, AD data len %u, RSSI %i\n", dev,
-    // type, ad->len, rssi);
 
     // We're only interested in connectable events
     if (type == BT_GAP_ADV_TYPE_ADV_IND ||
@@ -252,44 +238,11 @@ static void device_found(const bt_addr_le_t *addr, int8_t rssi, uint8_t type,
     }
 }
 
-static void disable_cte_request(void) {
-    int err;
-
-    const struct bt_df_conn_cte_rx_param cte_rx_params = {
-        .cte_types = BT_DF_CTE_TYPE_ALL,
-        .slot_durations = 0x1,
-        .num_ant_ids = ARRAY_SIZE(ant_patterns),
-        .ant_ids = ant_patterns,
-    };
-
-    const struct bt_df_conn_cte_req_params cte_req_params = {
-        .interval = CTE_REQ_INTERVAL,
-        .cte_length = CTE_LEN,
-        .cte_type = BT_DF_CTE_TYPE_AOA,
-    };
-
-    printk("Enable receiving of CTE...");
-    err = bt_df_conn_cte_rx_enable(default_conn, &cte_rx_params);
-    if (err) {
-        printk("failed (err %d)\n", err);
-        return;
-    }
-    printk("success.");
-
-    printk("Request CTE from peer device...");
-    err = bt_df_conn_cte_req_enable(default_conn, &cte_req_params);
-    if (err) {
-        printk("failed (err %d)\n", err);
-        return;
-    }
-    printk("success.\n");
-}
-
 static void enable_cte_request(void) {
     int err;
 
     const struct bt_df_conn_cte_rx_param cte_rx_params = {
-        .cte_types = BT_DF_CTE_TYPE_ALL,
+        .cte_types = BT_DF_CTE_TYPE_AOA,
         .slot_durations = 0x1,
         .num_ant_ids = ARRAY_SIZE(ant_patterns),
         .ant_ids = ant_patterns,
@@ -354,15 +307,9 @@ static void connected(struct bt_conn *conn, uint8_t conn_err) {
         start_scan();
         return;
     }
-
-    // printk("${\"Addr\":\"%s\",\"Interval\":\"%ums\",\"PHY\":\"%s\"}\n",
-    // le_addr,
-    //        , phy2str(info->phy));
-
     phy_update(default_conn, BT_CONN_LE_PHY_PARAM_1M);
     // phy_update(default_conn, BT_CONN_LE_PHY_PARAM_2M);
-
-    printk("${\"Addr\":\"%s\"}\n", addr);
+    printk("${\"Addr\":\"%s\",\"Interval\":\"%d\"}\n", addr, CTE_REQ_INTERVAL);
 
     if (conn == default_conn) {
         enable_cte_request();
