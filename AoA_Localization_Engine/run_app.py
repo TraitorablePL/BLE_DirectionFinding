@@ -3,11 +3,11 @@ from gui import MainWindow, Communicate
 from localization_engine import Localization
 
 from queue import Queue
-from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QApplication
+from threading import Thread
 
 import sys
 import time
-import threading
 
 def updateWorker(event_close, queue):
     
@@ -27,13 +27,13 @@ def updateWorker(event_close, queue):
 
 if __name__== '__main__':
     data_queue = Queue()
-    app = QtWidgets.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     window = MainWindow()
 
     logger = DataLogger(window.close, data_queue)
     logger.start()
 
-    update_thread = threading.Thread(name = 'update_thread', target = updateWorker, args = (window.close, data_queue))
+    update_thread = Thread(name = 'update_thread', target = updateWorker, args = (window.close, data_queue))
     update_thread.start()
 
     sys.exit(app.exec())
