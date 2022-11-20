@@ -83,20 +83,20 @@ class MainWindow(QMainWindow):
         self.info_layout = QHBoxLayout()
         self.xlabel = QLabel("Azimuth: 0")
         self.ylabel = QLabel("Elevation: 0")
+        self.info_layout.addWidget(self.xlabel)
+        self.info_layout.addWidget(self.ylabel)
+        self.top_layout.addLayout(self.info_layout, *(0,0))
+        self.top_layout.addWidget(self.sc, *(1,0))
+        self.frame.setLayout(self.top_layout)
         self.setupLayout()
         self.show()
 
     def setupLayout(self):
         self.setCentralWidget(self.frame)
-        self.top_layout.addLayout(self.info_layout, *(0,0))
-        self.top_layout.addWidget(self.sc, *(1,0))
         self.top_layout.setContentsMargins(0,0,0,0)
         self.xlabel.setAlignment(Qt.AlignCenter)
         self.ylabel.setAlignment(Qt.AlignCenter)
-        self.info_layout.addWidget(self.xlabel)
-        self.info_layout.addWidget(self.ylabel)
         self.frame.setStyleSheet("font-family: Arial; font-size: 24px; background-color: white")
-        self.frame.setLayout(self.top_layout)
 
     def closeEvent(self, event):
         print("GUI done!")

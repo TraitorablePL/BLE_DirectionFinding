@@ -23,11 +23,11 @@
 #define CONN_LATENCY 5U
 
 // Arbitrary selected timeout value
-#define CONN_TIMEOUT 1000U
+#define CONN_TIMEOUT 400U
 
 // Interval used to run CTE request procedure periodically.
 // Value is a number of connection events.
-#define CTE_REQ_INTERVAL (10U)
+#define CTE_REQ_INTERVAL (CONN_LATENCY + 10U)
 
 // Length of CTE in unit of 8 us
 #define CTE_LEN (0x14U)
