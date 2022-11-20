@@ -23,7 +23,7 @@
 #define CONN_LATENCY 5U
 
 // Arbitrary selected timeout value
-#define CONN_TIMEOUT 400U
+#define CONN_TIMEOUT 1600U
 
 // Interval used to run CTE request procedure periodically.
 // Value is a number of connection events.
@@ -294,7 +294,6 @@ static void start_scan(void) {
 
 static void connected(struct bt_conn *conn, uint8_t conn_err) {
     char addr[BT_ADDR_LE_STR_LEN];
-    int interval = 10;
 
     bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
@@ -307,8 +306,8 @@ static void connected(struct bt_conn *conn, uint8_t conn_err) {
         start_scan();
         return;
     }
-    phy_update(default_conn, BT_CONN_LE_PHY_PARAM_1M);
-    // phy_update(default_conn, BT_CONN_LE_PHY_PARAM_2M);
+    // phy_update(default_conn, BT_CONN_LE_PHY_PARAM_1M);
+    phy_update(default_conn, BT_CONN_LE_PHY_PARAM_2M);
     printk("${\"Addr\":\"%s\",\"Interval\":\"%d\"}\n", addr, CTE_REQ_INTERVAL);
 
     if (conn == default_conn) {
