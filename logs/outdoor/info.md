@@ -116,3 +116,35 @@
 135 deg, min height - log_2022.10.31_16.44.06.json
 150 deg, min height - log_2022.10.31_16.39.49.json
 180 deg, min height - no CTE
+
+## Complex with corner callibration 1M PHY (Accuracy)
+
+log_2022.11.15_10.37.55.json reference 0 azim 0 elevation same height
+log_2022.11.15_10.43.29.json reference 0 azim 0 elevation same height 20 cm left
+log_2022.11.15_10.48.21.json reference 0 azim 0 elevation same height 20 cm right
+
+log_2022.11.15_10.58.00.json reference 0 azim 0 elevation height ref
+log_2022.11.15_11.01.24.json reference 0 azim 0 elevation height -8 cm
+
+## Complex with corner callibration 1M PHY (Receiver centrum at 93cm)
+
+TX height 68cm - log_2022.11.21_19.27.22.json
+TX height 86cm - log_2022.11.21_19.30.24.json
+
+## Single antenna reference on 1M and 2M PHY
+
+1M PHY - log_2022.11.21_19.33.49.json 
+2M PHY - log_2022.11.21_19.36.58.json
+
+## Complex with corner callibration 1M PHY (Dynamic - range test)
+
+-30 deg - log_2022.11.21_19.40.27.json
+-52 deg - log_2022.11.21_19.42.20.json
+-64 deg - log_2022.11.21_19.45.00.json
+-72 deg (real 75 deg) - log_2022.11.21_19.46.56.json
+-78 deg (real 85 deg) - log_2022.11.21_19.50.49.json
+0 deg - log_2022.11.21_19.53.25.json
+20 deg (real 22 deg) - log_2022.11.21_19.54.44.json
+44 deg (real 44 deg) - log_2022.11.21_19.56.33.json
+
+Above 45 deg problems with connection, when TX at same height, better situation when TX on different height
