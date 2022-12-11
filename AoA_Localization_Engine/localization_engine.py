@@ -20,7 +20,13 @@ class Localization():
         if len(values) == 0:
             return 0
         else:
-            return sum(values)/len(values)
+            return np.mean(values)
+
+    def calcMedian(self, values):
+        if len(values) == 0:
+            return 0
+        else:
+            return np.median(values)
 
     def calcAngle(self, deg_value, inverted, results, frequency):
         wave_len = self.velocity/frequency
@@ -98,7 +104,7 @@ class Localization():
                 else:
                     self.calcAngle(samp_period_diff[i], inverted, elevation, self.channel2Freq(data["Channel"]))
 
-        return (self.calcMean(azimuth), self.calcMean(elevation))
+        return (self.calcMedian(azimuth), self.calcMedian(elevation))
       
     ## MUSIC algorithm for localization
     def locate_MUSIC(self):
